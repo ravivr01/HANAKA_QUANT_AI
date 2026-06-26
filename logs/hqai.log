@@ -1,0 +1,3 @@
+2026-06-26 16:31:07.957 | INFO     | __main__:<module>:1 - HQAI Logger Working
+2026-06-26 16:43:28.256 | INFO     | hqai.core.database:__init__:25 - Connected to DuckDB: /Users/ravivr/Documents/HANAKA_QUANT_AI/database/hqai.duckdb
+2026-06-26 17:27:19.394 | INFO     | hqai.core.database:connect:54 - Connected -> /Users/ravivr/Documents/HANAKA_QUANT_AI/database/hqai.duckdb
