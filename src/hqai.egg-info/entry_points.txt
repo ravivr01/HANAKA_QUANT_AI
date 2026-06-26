@@ -1,0 +1,2 @@
+[console_scripts]
+hqai = hqai.cli.main:main
