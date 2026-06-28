@@ -1,16 +1,16 @@
 {
-    "generated_at": "2026-06-28T12:24:53.949782",
+    "generated_at": "2026-06-28T12:26:08.705364",
     "records": 2372,
     "columns": 8,
     "column_names": [
         "SYMBOL",
         "NAME OF COMPANY",
-        " SERIES",
-        " DATE OF LISTING",
-        " PAID UP VALUE",
-        " MARKET LOT",
-        " ISIN NUMBER",
-        " FACE VALUE"
+        "SERIES",
+        "DATE OF LISTING",
+        "PAID UP VALUE",
+        "MARKET LOT",
+        "ISIN NUMBER",
+        "FACE VALUE"
     ],
     "source": "NSE",
     "csv_file": "universe.csv",

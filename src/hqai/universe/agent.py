@@ -2,7 +2,8 @@
 ============================================================
 HQAI Universe Agent
 ============================================================
-Release : 0.3
+Release : 0.3.0
+Author  : Hanaka Quant AI
 ============================================================
 """
 
@@ -14,6 +15,7 @@ from hqai.core.logger import log
 from hqai.universe.downloader import UniverseDownloader
 from hqai.universe.validator import UniverseValidator
 from hqai.universe.storage import UniverseStorage
+from hqai.universe.metadata import UniverseMetadata
 
 
 class UniverseAgent:
@@ -22,15 +24,17 @@ class UniverseAgent:
 
     Workflow
 
-    Prepare Directories
-            ↓
-    Download Universe
-            ↓
-    Validate Universe
-            ↓
-    Store Universe
-            ↓
-    Finish
+        Prepare Directories
+                ↓
+        Download Universe
+                ↓
+        Validate Universe
+                ↓
+        Store Universe
+                ↓
+        Generate Metadata
+                ↓
+        Finish
     """
 
     def __init__(self):
@@ -39,7 +43,11 @@ class UniverseAgent:
 
         self.universe = None
 
-        self.output_dir = config.data_dir / "bronze" / "universe"
+        self.output_dir = (
+            config.data_dir /
+            "bronze" /
+            "universe"
+        )
 
         self.downloader = UniverseDownloader()
 
@@ -47,7 +55,9 @@ class UniverseAgent:
 
         self.storage = UniverseStorage()
 
-    ########################################################
+        self.metadata = UniverseMetadata()
+
+    ############################################################
 
     def run(self):
 
@@ -57,15 +67,17 @@ class UniverseAgent:
 
         self.prepare_directories()
 
-        self.download_universe()
+        self.download()
 
-        self.validate_universe()
+        self.validate()
 
-        self.store_universe()
+        self.store()
+
+        self.generate_metadata()
 
         self.finish()
 
-    ########################################################
+    ############################################################
 
     def prepare_directories(self):
 
@@ -74,41 +86,53 @@ class UniverseAgent:
             exist_ok=True
         )
 
-        log.info(f"Directory Ready : {self.output_dir}")
+        log.info(
+            f"Directory Ready : {self.output_dir}"
+        )
 
-    ########################################################
+    ############################################################
 
-    def download_universe(self):
+    def download(self):
 
         self.universe = self.downloader.download()
 
         log.info(
-            f"Downloaded : {len(self.universe)} Records"
+            f"Downloaded : {len(self.universe)} records"
         )
 
-    ########################################################
+    ############################################################
 
-    def validate_universe(self):
+    def validate(self):
 
         self.universe = self.validator.validate(
             self.universe
         )
 
         log.info(
-            f"Validated : {len(self.universe)} Records"
+            f"Validated : {len(self.universe)} records"
         )
 
-    ########################################################
+    ############################################################
 
-    def store_universe(self):
+    def store(self):
 
         self.storage.save(
             self.universe
         )
 
-        log.info("Universe Stored Successfully")
+        log.info(
+            "Universe Stored Successfully"
+        )
 
-    ########################################################
+    ############################################################
+
+    def generate_metadata(self):
+
+        self.metadata.generate(
+            self.universe
+        )
+
+    ############################################################
 
     def finish(self):
 
