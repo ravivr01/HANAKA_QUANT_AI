@@ -1,0 +1,103 @@
+"""
+============================================================
+HQAI Universe Agent
+============================================================
+"""
+
+from datetime import datetime
+
+from hqai.core.config import config
+from hqai.core.logger import log
+
+
+class UniverseAgent:
+
+    def __init__(self):
+
+        self.start_time = datetime.now()
+
+        self.universe = None
+
+        self.output_dir = config.data_dir / "bronze" / "universe"
+
+    ########################################################
+
+    def run(self):
+
+        log.info("=" * 60)
+        log.info("HQAI Universe Agent Started")
+        log.info("=" * 60)
+
+        self.prepare_directories()
+
+        self.download_universe()
+
+        self.validate()
+
+        self.save_csv()
+
+        self.save_parquet()
+
+        self.save_duckdb()
+
+        self.generate_metadata()
+
+        self.finish()
+
+    ########################################################
+
+    def prepare_directories(self):
+
+        self.output_dir.mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
+        log.info(f"Directory Ready : {self.output_dir}")
+
+    ########################################################
+
+    def download_universe(self):
+
+        log.info("Downloading NSE Universe...")
+
+    ########################################################
+
+    def validate(self):
+
+        log.info("Validating Universe...")
+
+    ########################################################
+
+    def save_csv(self):
+
+        log.info("Saving CSV...")
+
+    ########################################################
+
+    def save_parquet(self):
+
+        log.info("Saving Parquet...")
+
+    ########################################################
+
+    def save_duckdb(self):
+
+        log.info("Saving DuckDB...")
+
+    ########################################################
+
+    def generate_metadata(self):
+
+        log.info("Generating Metadata...")
+
+    ########################################################
+
+    def finish(self):
+
+        elapsed = datetime.now() - self.start_time
+
+        log.info("=" * 60)
+        log.info("Universe Agent Finished")
+        log.info(f"Elapsed : {elapsed}")
+        log.info("=" * 60)
