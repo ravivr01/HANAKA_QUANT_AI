@@ -1,0 +1,20 @@
+{
+    "generated_at": "2026-06-28T12:24:53.949782",
+    "records": 2372,
+    "columns": 8,
+    "column_names": [
+        "SYMBOL",
+        "NAME OF COMPANY",
+        " SERIES",
+        " DATE OF LISTING",
+        " PAID UP VALUE",
+        " MARKET LOT",
+        " ISIN NUMBER",
+        " FACE VALUE"
+    ],
+    "source": "NSE",
+    "csv_file": "universe.csv",
+    "parquet_file": "universe.parquet",
+    "duckdb_table": "universe",
+    "hqai_version": "0.3.0"
+}
