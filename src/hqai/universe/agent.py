@@ -1,20 +1,37 @@
 """
+============================================================
 HQAI Universe Agent
+============================================================
+Release : 0.3
+============================================================
 """
 
-from pathlib import Path
+from datetime import datetime
 
 from hqai.core.config import config
 from hqai.core.logger import log
 from hqai.universe.downloader import UniverseDownloader
+from hqai.universe.storage import UniverseStorage
 
 
 class UniverseAgent:
     """
-    Downloads and prepares the NSE universe.
+    Orchestrates the complete Universe Synchronization process.
+
+    Workflow
+
+        Prepare Directories
+                ↓
+        Download Universe
+                ↓
+        Store Data
+                ↓
+        Finish
     """
 
     def __init__(self):
+
+        self.start_time = datetime.now()
 
         self.universe = None
 
@@ -23,6 +40,8 @@ class UniverseAgent:
             "bronze" /
             "universe"
         )
+
+    ########################################################
 
     def run(self):
 
@@ -34,9 +53,11 @@ class UniverseAgent:
 
         self.download_universe()
 
-        log.info("=" * 60)
-        log.info("Universe Agent Finished")
-        log.info("=" * 60)
+        self.store_universe()
+
+        self.finish()
+
+    ########################################################
 
     def prepare_directories(self):
 
@@ -45,7 +66,11 @@ class UniverseAgent:
             exist_ok=True
         )
 
-        log.info(f"Directory Ready : {self.output_dir}")
+        log.info(
+            f"Directory Ready : {self.output_dir}"
+        )
+
+    ########################################################
 
     def download_universe(self):
 
@@ -54,5 +79,24 @@ class UniverseAgent:
         self.universe = downloader.download()
 
         log.info(
-            f"Universe Loaded : {len(self.universe)} stocks"
+            f"Universe Loaded : {len(self.universe)} Stocks"
         )
+
+    ########################################################
+
+    def store_universe(self):
+
+        storage = UniverseStorage()
+
+        storage.save(self.universe)
+
+    ########################################################
+
+    def finish(self):
+
+        elapsed = datetime.now() - self.start_time
+
+        log.info("=" * 60)
+        log.info("Universe Agent Finished")
+        log.info(f"Elapsed Time : {elapsed}")
+        log.info("=" * 60)
