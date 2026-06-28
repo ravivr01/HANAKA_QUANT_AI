@@ -10,23 +10,27 @@ from datetime import datetime
 
 from hqai.core.config import config
 from hqai.core.logger import log
+
 from hqai.universe.downloader import UniverseDownloader
+from hqai.universe.validator import UniverseValidator
 from hqai.universe.storage import UniverseStorage
 
 
 class UniverseAgent:
     """
-    Orchestrates the complete Universe Synchronization process.
+    HQAI Universe Synchronization Pipeline
 
     Workflow
 
-        Prepare Directories
-                ↓
-        Download Universe
-                ↓
-        Store Data
-                ↓
-        Finish
+    Prepare Directories
+            ↓
+    Download Universe
+            ↓
+    Validate Universe
+            ↓
+    Store Universe
+            ↓
+    Finish
     """
 
     def __init__(self):
@@ -35,23 +39,27 @@ class UniverseAgent:
 
         self.universe = None
 
-        self.output_dir = (
-            config.data_dir /
-            "bronze" /
-            "universe"
-        )
+        self.output_dir = config.data_dir / "bronze" / "universe"
+
+        self.downloader = UniverseDownloader()
+
+        self.validator = UniverseValidator()
+
+        self.storage = UniverseStorage()
 
     ########################################################
 
     def run(self):
 
         log.info("=" * 60)
-        log.info("HQAI Universe Agent Started")
+        log.info("HQAI Universe Synchronization Started")
         log.info("=" * 60)
 
         self.prepare_directories()
 
         self.download_universe()
+
+        self.validate_universe()
 
         self.store_universe()
 
@@ -66,29 +74,39 @@ class UniverseAgent:
             exist_ok=True
         )
 
-        log.info(
-            f"Directory Ready : {self.output_dir}"
-        )
+        log.info(f"Directory Ready : {self.output_dir}")
 
     ########################################################
 
     def download_universe(self):
 
-        downloader = UniverseDownloader()
-
-        self.universe = downloader.download()
+        self.universe = self.downloader.download()
 
         log.info(
-            f"Universe Loaded : {len(self.universe)} Stocks"
+            f"Downloaded : {len(self.universe)} Records"
+        )
+
+    ########################################################
+
+    def validate_universe(self):
+
+        self.universe = self.validator.validate(
+            self.universe
+        )
+
+        log.info(
+            f"Validated : {len(self.universe)} Records"
         )
 
     ########################################################
 
     def store_universe(self):
 
-        storage = UniverseStorage()
+        self.storage.save(
+            self.universe
+        )
 
-        storage.save(self.universe)
+        log.info("Universe Stored Successfully")
 
     ########################################################
 
@@ -97,6 +115,6 @@ class UniverseAgent:
         elapsed = datetime.now() - self.start_time
 
         log.info("=" * 60)
-        log.info("Universe Agent Finished")
+        log.info("HQAI Universe Synchronization Completed")
         log.info(f"Elapsed Time : {elapsed}")
         log.info("=" * 60)

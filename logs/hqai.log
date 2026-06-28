@@ -79,3 +79,22 @@
 2026-06-28 17:52:58.622 | INFO     | hqai.universe.validator:validate:34 - Validating universe...
 2026-06-28 17:52:58.636 | INFO     | hqai.universe.validator:_remove_duplicates:86 - Removed 0 duplicate symbols
 2026-06-28 17:52:58.648 | INFO     | hqai.universe.validator:validate:52 - Validation Complete : 2372 records
+2026-06-28 17:54:08.807 | INFO     | hqai.universe.agent:run:54 - ============================================================
+2026-06-28 17:54:08.807 | INFO     | hqai.universe.agent:run:55 - HQAI Universe Synchronization Started
+2026-06-28 17:54:08.807 | INFO     | hqai.universe.agent:run:56 - ============================================================
+2026-06-28 17:54:08.807 | INFO     | hqai.universe.agent:prepare_directories:77 - Directory Ready : /Users/ravivr/Documents/HANAKA_QUANT_AI/data/bronze/universe
+2026-06-28 17:54:08.807 | INFO     | hqai.universe.downloader:download:19 - Connecting to NSE...
+2026-06-28 17:54:09.417 | INFO     | hqai.universe.downloader:download:38 - Downloaded 2372 records
+2026-06-28 17:54:09.418 | INFO     | hqai.universe.agent:download_universe:85 - Downloaded : 2372 Records
+2026-06-28 17:54:09.419 | INFO     | hqai.universe.validator:validate:34 - Validating universe...
+2026-06-28 17:54:09.432 | INFO     | hqai.universe.validator:_remove_duplicates:86 - Removed 0 duplicate symbols
+2026-06-28 17:54:09.444 | INFO     | hqai.universe.validator:validate:52 - Validation Complete : 2372 records
+2026-06-28 17:54:09.445 | INFO     | hqai.universe.agent:validate_universe:97 - Validated : 2372 Records
+2026-06-28 17:54:09.452 | INFO     | hqai.universe.storage:save_csv:65 - CSV Saved -> /Users/ravivr/Documents/HANAKA_QUANT_AI/data/bronze/universe/universe.csv
+2026-06-28 17:54:09.491 | INFO     | hqai.universe.storage:save_parquet:78 - Parquet Saved -> /Users/ravivr/Documents/HANAKA_QUANT_AI/data/bronze/universe/universe.parquet
+2026-06-28 17:54:09.524 | INFO     | hqai.universe.storage:save_duckdb:105 - DuckDB Updated -> /Users/ravivr/Documents/HANAKA_QUANT_AI/database/hqai.duckdb
+2026-06-28 17:54:09.524 | INFO     | hqai.universe.agent:store_universe:109 - Universe Stored Successfully
+2026-06-28 17:54:09.524 | INFO     | hqai.universe.agent:finish:117 - ============================================================
+2026-06-28 17:54:09.524 | INFO     | hqai.universe.agent:finish:118 - HQAI Universe Synchronization Completed
+2026-06-28 17:54:09.524 | INFO     | hqai.universe.agent:finish:119 - Elapsed Time : 0:00:00.717542
+2026-06-28 17:54:09.524 | INFO     | hqai.universe.agent:finish:120 - ============================================================
