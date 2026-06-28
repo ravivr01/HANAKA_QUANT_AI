@@ -74,3 +74,8 @@
 2026-06-28 17:51:52.094 | INFO     | hqai.universe.agent:finish:100 - Universe Agent Finished
 2026-06-28 17:51:52.094 | INFO     | hqai.universe.agent:finish:101 - Elapsed Time : 0:00:00.327955
 2026-06-28 17:51:52.094 | INFO     | hqai.universe.agent:finish:102 - ============================================================
+2026-06-28 17:52:58.233 | INFO     | hqai.universe.downloader:download:19 - Connecting to NSE...
+2026-06-28 17:52:58.621 | INFO     | hqai.universe.downloader:download:38 - Downloaded 2372 records
+2026-06-28 17:52:58.622 | INFO     | hqai.universe.validator:validate:34 - Validating universe...
+2026-06-28 17:52:58.636 | INFO     | hqai.universe.validator:_remove_duplicates:86 - Removed 0 duplicate symbols
+2026-06-28 17:52:58.648 | INFO     | hqai.universe.validator:validate:52 - Validation Complete : 2372 records
