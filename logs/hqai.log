@@ -162,3 +162,17 @@
 2026-06-28 18:05:41.360 | INFO     | hqai.universe.agent:finish:142 - HQAI Universe Synchronization Completed
 2026-06-28 18:05:41.361 | INFO     | hqai.universe.agent:finish:143 - Elapsed Time : 0:00:00.503836
 2026-06-28 18:05:41.361 | INFO     | hqai.universe.agent:finish:144 - ============================================================
+2026-07-07 11:07:29.962 | INFO     | hqai.core.database:connect:54 - Connected -> /Users/ravivr/Documents/HANAKA_QUANT_AI/database/hqai.duckdb
+2026-07-07 11:07:29.975 | INFO     | hqai.history.downloader:download_symbol:69 - Downloading INFY.NS
+2026-07-07 11:07:32.743 | SUCCESS  | hqai.history.downloader:save_symbol:116 - Saved data/bronze/history/INFY.parquet
+2026-07-07 11:07:32.743 | INFO     | hqai.history.downloader:download_symbol:69 - Downloading RELIANCE.NS
+2026-07-07 11:07:33.054 | SUCCESS  | hqai.history.downloader:save_symbol:116 - Saved data/bronze/history/RELIANCE.parquet
+2026-07-07 11:07:33.054 | INFO     | hqai.history.downloader:download_symbol:69 - Downloading SBIN.NS
+2026-07-07 11:07:33.517 | SUCCESS  | hqai.history.downloader:save_symbol:116 - Saved data/bronze/history/SBIN.parquet
+2026-07-07 11:07:33.517 | INFO     | hqai.history.downloader:download_symbol:69 - Downloading TCS.NS
+2026-07-07 11:07:33.997 | SUCCESS  | hqai.history.downloader:save_symbol:116 - Saved data/bronze/history/TCS.parquet
+2026-07-07 11:07:33.998 | INFO     | hqai.history.downloader:download_symbol:69 - Downloading ITC.NS
+2026-07-07 11:07:34.459 | SUCCESS  | hqai.history.downloader:save_symbol:116 - Saved data/bronze/history/ITC.parquet
+2026-07-07 11:07:34.460 | INFO     | hqai.history.downloader:download_many:159 - ============================================================
+2026-07-07 11:07:34.460 | SUCCESS  | hqai.history.downloader:download_many:161 - Downloaded : 5
+2026-07-07 11:07:34.460 | WARNING  | hqai.history.downloader:download_many:165 - Failed : 0
