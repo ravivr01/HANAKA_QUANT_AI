@@ -3,16 +3,16 @@
 HQAI History Downloader
 ==========================================================
 
-Downloads historical data from Yahoo Finance
-and saves immediately to Bronze Storage.
+Downloads historical market data from Yahoo Finance
+and delegates persistence to HistoryStorage.
 
 Author  : Ravi Varma
-Version : 1.0
+Version : 2.0
 """
 
 from __future__ import annotations
 
-from pathlib import Path
+import gc
 
 import pandas as pd
 import yfinance as yf
@@ -20,6 +20,7 @@ from tqdm import tqdm
 
 from hqai.core.database import db
 from hqai.core.logger import log
+from hqai.history.storage import HistoryStorage
 
 
 class HistoryDownloader:
@@ -30,14 +31,9 @@ class HistoryDownloader:
 
         self.interval = "1d"
 
-        self.output = Path("data/bronze/history")
+        self.storage = HistoryStorage()
 
-        self.output.mkdir(
-            parents=True,
-            exist_ok=True,
-        )
-
-    # -----------------------------------------------------
+    # --------------------------------------------------
 
     def load_universe(self) -> pd.DataFrame:
 
@@ -57,7 +53,7 @@ class HistoryDownloader:
 
         return universe
 
-    # -----------------------------------------------------
+    # --------------------------------------------------
 
     def download_symbol(
         self,
@@ -74,73 +70,61 @@ class HistoryDownloader:
             ticker,
             period=self.period,
             interval=self.interval,
-            progress=False,
             auto_adjust=False,
+            progress=False,
             threads=False,
         )
 
         if df.empty:
 
-            raise Exception(
-                f"No data : {ticker}"
+            raise RuntimeError(
+                f"No data returned for {ticker}"
             )
 
         df.reset_index(inplace=True)
 
         if isinstance(df.columns, pd.MultiIndex):
 
-            df.columns = [
-                c[0]
-                for c in df.columns
-            ]
+            df.columns = [c[0] for c in df.columns]
 
         df["SYMBOL"] = symbol
 
         return df
 
-    # -----------------------------------------------------
-
-    def save_symbol(
-        self,
-        df: pd.DataFrame,
-        symbol: str,
-    ):
-
-        file = self.output / f"{symbol}.parquet"
-
-        df.to_parquet(
-            file,
-            index=False,
-        )
-
-        log.success(
-            f"Saved {file}"
-        )
-
-    # -----------------------------------------------------
+    # --------------------------------------------------
 
     def download_many(
         self,
         symbols: list[str],
-    ):
+    ) -> list[str]:
 
         success = 0
+
+        skipped = 0
 
         failed = []
 
         for symbol in tqdm(
             symbols,
-            desc="Downloading History",
+            desc="History Download",
         ):
 
             try:
 
-                df = self.download_symbol(
-                    symbol
+                if self.storage.exists(symbol):
+
+                    skipped += 1
+
+                    continue
+
+                df = self.download_symbol(symbol)
+
+                self.storage.save(
+                    df,
+                    symbol,
                 )
 
-                self.save_symbol(
-                    df,
+                self.storage.register(
                     symbol,
                 )
 
@@ -148,10 +132,12 @@ class HistoryDownloader:
 
                 del df
 
+                gc.collect()
+
             except Exception as ex:
 
                 log.error(
-                    f"{symbol} : {ex}"
+                    f"{symbol} -> {ex}"
                 )
 
                 failed.append(symbol)
@@ -162,13 +148,17 @@ class HistoryDownloader:
             f"Downloaded : {success}"
         )
 
+        log.info(
+            f"Skipped     : {skipped}"
+        )
+
         log.warning(
-            f"Failed : {len(failed)}"
+            f"Failed      : {len(failed)}"
         )
 
         return failed
 
-    # -----------------------------------------------------
+    # --------------------------------------------------
 
     def download_all(self):
 
@@ -176,6 +166,4 @@ class HistoryDownloader:
 
         symbols = universe["SYMBOL"].to_list()
 
-        return self.download_many(
-            symbols
-        )
+        return self.download_many(symbols)
