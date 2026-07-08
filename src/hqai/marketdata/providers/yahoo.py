@@ -1,12 +1,11 @@
 """
 ==========================================================
 HQAI Yahoo Market Data Provider
-==========================================================
+Release : 1.0.5
+Module  : Market Data Engine
 
 Yahoo Finance implementation of BaseProvider.
-
-Author  : Ravi Varma
-Release : 1.0.3
+==========================================================
 """
 
 from __future__ import annotations
@@ -18,10 +17,12 @@ from hqai.core.logger import log
 from hqai.marketdata.base import BaseProvider
 from hqai.marketdata.registry import registry
 
+__all__ = ["YahooProvider"]
+
 
 class YahooProvider(BaseProvider):
     """
-    Yahoo Finance Provider.
+    Yahoo Finance Provider for NSE equities.
     """
 
     @property
@@ -30,13 +31,13 @@ class YahooProvider(BaseProvider):
 
     ########################################################
 
-    def connect(self):
+    def connect(self) -> None:
 
         log.info("Yahoo Provider Ready")
 
     ########################################################
 
-    def disconnect(self):
+    def disconnect(self) -> None:
 
         log.info("Yahoo Provider Closed")
 
@@ -49,7 +50,7 @@ class YahooProvider(BaseProvider):
         interval: str = "1d",
     ) -> pd.DataFrame:
 
-        ticker = f"{symbol}.NS"
+        ticker = f"{symbol.upper()}.NS"
 
         log.info(f"Downloading {ticker}")
 
@@ -63,16 +64,20 @@ class YahooProvider(BaseProvider):
         )
 
         if df.empty:
-
             raise RuntimeError(f"No data returned for {ticker}")
 
         df.reset_index(inplace=True)
 
         if isinstance(df.columns, pd.MultiIndex):
-
             df.columns = [column[0] for column in df.columns]
 
-        df["SYMBOL"] = symbol
+        df.columns = [column.upper().replace(" ", "_") for column in df.columns]
+
+        df["SYMBOL"] = symbol.upper()
+
+        df = (
+            df.sort_values("DATE").drop_duplicates(subset="DATE").reset_index(drop=True)
+        )
 
         return df
 
@@ -85,23 +90,23 @@ class YahooProvider(BaseProvider):
         interval: str = "1d",
     ) -> dict[str, pd.DataFrame]:
 
-        result = {}
+        datasets: dict[str, pd.DataFrame] = {}
 
         for symbol in symbols:
 
             try:
 
-                result[symbol] = self.download_symbol(
-                    symbol,
-                    period,
-                    interval,
+                datasets[symbol] = self.download_symbol(
+                    symbol=symbol,
+                    period=period,
+                    interval=interval,
                 )
 
             except Exception as ex:
 
                 log.error(f"{symbol} -> {ex}")
 
-        return result
+        return datasets
 
     ########################################################
 
@@ -109,11 +114,16 @@ class YahooProvider(BaseProvider):
 
         try:
 
-            self.download_symbol("INFY", period="5d")
+            self.download_symbol(
+                "INFY",
+                period="5d",
+            )
 
             return True
 
-        except Exception:
+        except Exception as ex:
+
+            log.error(ex)
 
             return False
 
@@ -126,10 +136,12 @@ class YahooProvider(BaseProvider):
             "exchange": "NSE",
             "supports_intraday": True,
             "supports_history": True,
+            "supports_incremental": True,
         }
 
 
-registry.register(
-    "yahoo",
-    YahooProvider,
-)
+if not registry.exists("yahoo"):
+    registry.register(
+        "yahoo",
+        YahooProvider,
+    )
