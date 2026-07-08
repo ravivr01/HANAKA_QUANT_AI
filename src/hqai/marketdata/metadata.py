@@ -2,33 +2,39 @@
 ==========================================================
 HQAI Market Data Metadata
 Release : 1.0.6
+Module  : Market Data Engine
 Author  : Hanaka Quant AI
 
-Metadata model for Bronze Layer datasets.
+Metadata Manager for Bronze Layer datasets.
 ==========================================================
 """
 
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, dataclass
 from datetime import datetime
-import json
 from pathlib import Path
 
 
 @dataclass
 class MarketDataMetadata:
     """
-    Metadata associated with a Bronze market data dataset.
+    Metadata associated with a Bronze Layer dataset.
     """
 
     symbol: str
+
     exchange: str
+
     provider: str
 
     rows: int
 
+    columns: int
+
     first_date: str
+
     last_date: str
 
     updated_at: str
@@ -38,17 +44,21 @@ class MarketDataMetadata:
     status: str = "SUCCESS"
 
     ########################################################
+    # Convert to Dictionary
+    ########################################################
 
     def to_dict(self) -> dict:
 
         return asdict(self)
 
     ########################################################
+    # Save Metadata
+    ########################################################
 
     def save(
         self,
         filename: Path,
-    ):
+    ) -> None:
 
         filename.parent.mkdir(
             parents=True,
@@ -68,6 +78,8 @@ class MarketDataMetadata:
             )
 
     ########################################################
+    # Load Metadata
+    ########################################################
 
     @classmethod
     def load(
@@ -86,6 +98,8 @@ class MarketDataMetadata:
         return cls(**data)
 
     ########################################################
+    # Factory Method
+    ########################################################
 
     @classmethod
     def create(
@@ -93,17 +107,33 @@ class MarketDataMetadata:
         symbol: str,
         provider: str,
         rows: int,
+        columns: int,
         first_date,
         last_date,
         exchange: str = "NSE",
     ):
 
         return cls(
-            symbol=symbol,
+            symbol=symbol.upper(),
             exchange=exchange,
             provider=provider,
             rows=rows,
+            columns=columns,
             first_date=str(first_date),
             last_date=str(last_date),
             updated_at=datetime.now().isoformat(),
+            version="1.0.0",
+            status="SUCCESS",
+        )
+
+    ########################################################
+    # Pretty Representation
+    ########################################################
+
+    def __str__(self):
+
+        return (
+            f"{self.symbol} | "
+            f"{self.rows} rows | "
+            f"{self.first_date} -> {self.last_date}"
         )
