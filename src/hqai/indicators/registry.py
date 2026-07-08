@@ -3,10 +3,10 @@
 HQAI Indicator Registry
 ==========================================================
 
-Central registry for Indicator Engine.
+Central registry for all indicators.
 
-Release : 0.8
-Author  : Hanaka Quant AI
+Author  : Ravi Varma
+Release : F1
 """
 
 from __future__ import annotations
@@ -14,15 +14,12 @@ from __future__ import annotations
 from typing import Type
 
 from hqai.indicators.base import BaseIndicator
-from hqai.indicators.exceptions import IndicatorRegistryError
 
 
 class IndicatorRegistry:
     """
-    Central registry of all HQAI indicators.
+    Central registry for HQAI indicators.
     """
-
-    ########################################################
 
     def __init__(self):
 
@@ -33,24 +30,9 @@ class IndicatorRegistry:
     def register(
         self,
         indicator: Type[BaseIndicator],
-    ):
+    ) -> None:
 
-        name = indicator().metadata.name.upper()
-
-        if name in self._registry:
-
-            raise IndicatorRegistryError(f"Indicator '{name}' already registered.")
-
-        self._registry[name] = indicator
-
-    ########################################################
-
-    def unregister(
-        self,
-        name: str,
-    ):
-
-        self._registry.pop(name.upper(), None)
+        self._registry[indicator.__name__] = indicator
 
     ########################################################
 
@@ -59,22 +41,16 @@ class IndicatorRegistry:
         name: str,
     ) -> Type[BaseIndicator]:
 
-        key = name.upper()
-
-        if key not in self._registry:
-
-            raise IndicatorRegistryError(f"Unknown indicator : {name}")
-
-        return self._registry[key]
+        return self._registry[name]
 
     ########################################################
 
-    def create(
+    def exists(
         self,
         name: str,
-    ) -> BaseIndicator:
+    ) -> bool:
 
-        return self.get(name)()
+        return name in self._registry
 
     ########################################################
 
@@ -87,12 +63,6 @@ class IndicatorRegistry:
     def count(self) -> int:
 
         return len(self._registry)
-
-    ########################################################
-
-    def clear(self):
-
-        self._registry.clear()
 
 
 registry = IndicatorRegistry()
