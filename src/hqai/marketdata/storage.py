@@ -10,9 +10,9 @@ Bronze Layer Storage Manager
 
 from __future__ import annotations
 
-from pathlib import Path
-from datetime import datetime
 import json
+from datetime import datetime
+from pathlib import Path
 
 import polars as pl
 
@@ -33,14 +33,18 @@ class MarketDataStorage:
                         metadata.json
     """
 
+    ########################################################
+
     def __init__(self):
 
-        self.root = config.project_root / "data" / "bronze" / "equity" / "NSE"
+        self.root = config.bronze_dir / "equity" / "NSE"
 
         self.root.mkdir(
             parents=True,
             exist_ok=True,
         )
+
+        log.info(f"Bronze Storage -> {self.root}")
 
     ########################################################
 
@@ -112,6 +116,7 @@ class MarketDataStorage:
         with open(
             self.metadata_file(symbol),
             "w",
+            encoding="utf-8",
         ) as fp:
 
             json.dump(
@@ -160,6 +165,7 @@ class MarketDataStorage:
         with open(
             self.metadata_file(symbol),
             "r",
+            encoding="utf-8",
         ) as fp:
 
             return json.load(fp)
@@ -170,11 +176,17 @@ class MarketDataStorage:
         self,
     ) -> list[str]:
 
-        return sorted(p.name for p in self.root.iterdir() if p.is_dir())
+        if not self.root.exists():
+
+            return []
+
+        return sorted(path.name for path in self.root.iterdir() if path.is_dir())
 
     ########################################################
 
-    def summary(self):
+    def summary(
+        self,
+    ) -> dict:
 
         return {
             "symbols": len(self.list_symbols()),
