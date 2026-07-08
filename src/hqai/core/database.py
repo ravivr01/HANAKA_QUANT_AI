@@ -1,4 +1,5 @@
 """
+==========================================================
 HQAI Database Manager
 Release : 0.3
 Author  : Hanaka Quant AI
@@ -33,11 +34,16 @@ class DatabaseManager:
     - Close connection
     """
 
+    ########################################################
+
     def __init__(self):
 
         self.db_path: Path = config.duckdb_file
 
-        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        self.db_path.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
 
         self.connection: Optional[duckdb.DuckDBPyConnection] = None
 
@@ -46,6 +52,8 @@ class DatabaseManager:
         self.create_schema()
 
         self.create_history_index()
+
+        self.create_indicator_index()
 
     ########################################################
 
@@ -77,13 +85,19 @@ class DatabaseManager:
 
     ########################################################
 
-    def query(self, sql: str) -> pl.DataFrame:
+    def query(
+        self,
+        sql: str,
+    ) -> pl.DataFrame:
 
         return self.connection.sql(sql).pl()
 
     ########################################################
 
-    def table_exists(self, table_name: str) -> bool:
+    def table_exists(
+        self,
+        table_name: str,
+    ) -> bool:
 
         sql = f"""
         SELECT COUNT(*)
@@ -95,7 +109,11 @@ class DatabaseManager:
 
     ########################################################
 
-    def register_parquet(self, view_name: str, parquet_file: str):
+    def register_parquet(
+        self,
+        view_name: str,
+        parquet_file: str,
+    ):
 
         sql = f"""
         CREATE OR REPLACE VIEW {view_name}
@@ -111,12 +129,12 @@ class DatabaseManager:
     def create_schema(self):
 
         self.execute("""
-        CREATE SCHEMA IF NOT EXISTS bronze;
+            CREATE SCHEMA IF NOT EXISTS bronze;
 
-        CREATE SCHEMA IF NOT EXISTS silver;
+            CREATE SCHEMA IF NOT EXISTS silver;
 
-        CREATE SCHEMA IF NOT EXISTS gold;
-        """)
+            CREATE SCHEMA IF NOT EXISTS gold;
+            """)
 
         log.info("Database schema created")
 
@@ -125,28 +143,59 @@ class DatabaseManager:
     def create_history_index(self):
 
         self.execute("""
-        CREATE TABLE IF NOT EXISTS history_index (
+            CREATE TABLE IF NOT EXISTS history_index (
 
-            symbol VARCHAR PRIMARY KEY,
+                symbol VARCHAR PRIMARY KEY,
 
-            rows BIGINT,
+                rows BIGINT,
 
-            first_date DATE,
+                first_date DATE,
 
-            last_date DATE,
+                last_date DATE,
 
-            updated_at TIMESTAMP,
+                updated_at TIMESTAMP,
 
-            status VARCHAR
+                status VARCHAR
 
-        )
-        """)
+            )
+            """)
 
         log.info("History Index created")
 
     ########################################################
 
-    def backup(self, filename: str):
+    def create_indicator_index(self):
+
+        self.execute("""
+            CREATE TABLE IF NOT EXISTS indicator_index (
+
+                symbol VARCHAR PRIMARY KEY,
+
+                indicators INTEGER,
+
+                rows BIGINT,
+
+                first_date DATE,
+
+                last_date DATE,
+
+                updated_at TIMESTAMP,
+
+                version VARCHAR,
+
+                status VARCHAR
+
+            )
+            """)
+
+        log.info("Indicator Index created")
+
+    ########################################################
+
+    def backup(
+        self,
+        filename: str,
+    ):
 
         self.execute(f"EXPORT DATABASE '{filename}'")
 

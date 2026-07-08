@@ -39,17 +39,13 @@ class HistoryDownloader:
 
         log.info("Loading Universe")
 
-        universe = db.query(
-            """
+        universe = db.query("""
             SELECT *
             FROM universe
             ORDER BY SYMBOL
-            """
-        )
+            """)
 
-        log.success(
-            f"{len(universe)} symbols loaded."
-        )
+        log.success(f"{len(universe)} symbols loaded.")
 
         return universe
 
@@ -62,9 +58,7 @@ class HistoryDownloader:
 
         ticker = f"{symbol}.NS"
 
-        log.info(
-            f"Downloading {ticker}"
-        )
+        log.info(f"Downloading {ticker}")
 
         df = yf.download(
             ticker,
@@ -77,9 +71,7 @@ class HistoryDownloader:
 
         if df.empty:
 
-            raise RuntimeError(
-                f"No data returned for {ticker}"
-            )
+            raise RuntimeError(f"No data returned for {ticker}")
 
         df.reset_index(inplace=True)
 
@@ -136,25 +128,17 @@ class HistoryDownloader:
 
             except Exception as ex:
 
-                log.error(
-                    f"{symbol} -> {ex}"
-                )
+                log.error(f"{symbol} -> {ex}")
 
                 failed.append(symbol)
 
         log.info("=" * 60)
 
-        log.success(
-            f"Downloaded : {success}"
-        )
+        log.success(f"Downloaded : {success}")
 
-        log.info(
-            f"Skipped     : {skipped}"
-        )
+        log.info(f"Skipped     : {skipped}")
 
-        log.warning(
-            f"Failed      : {len(failed)}"
-        )
+        log.warning(f"Failed      : {len(failed)}")
 
         return failed
 

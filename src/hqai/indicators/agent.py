@@ -3,19 +3,23 @@
 HQAI Indicator Agent
 ==========================================================
 
-Builds indicator datasets from Bronze History.
+Builds technical indicators for all symbols.
 
 Author  : Ravi Varma
-Release : 0.9.5
+Release : 0.9.6
 """
 
 from __future__ import annotations
 
 import pandas as pd
+from tqdm import tqdm
 
 from hqai.core.base_agent import BaseAgent
+from hqai.core.database import db
 from hqai.core.logger import log
+
 from hqai.history.storage import HistoryStorage
+
 from hqai.indicators.index import IndicatorIndex
 from hqai.indicators.registry import registry
 from hqai.indicators.storage import IndicatorStorage
@@ -23,8 +27,10 @@ from hqai.indicators.storage import IndicatorStorage
 
 class IndicatorAgent(BaseAgent):
     """
-    Builds indicator datasets.
+    HQAI Indicator Engine
     """
+
+    ########################################################
 
     def __init__(self):
 
@@ -49,9 +55,11 @@ class IndicatorAgent(BaseAgent):
 
         for name in registry.list():
 
-            log.info(f"Running {name}")
+            indicator_class = registry.get(name)
 
-            indicator = registry.get(name)()
+            indicator = indicator_class()
+
+            log.info(f"Running {name}")
 
             df = indicator.run(df)
 
@@ -80,13 +88,52 @@ class IndicatorAgent(BaseAgent):
 
     def sync(self):
 
-        raise NotImplementedError
+        universe = db.query("""
+            SELECT SYMBOL
+            FROM universe
+            ORDER BY SYMBOL
+            """)
+
+        symbols = universe["SYMBOL"].to_list()
+
+        total = len(symbols)
+
+        success = 0
+
+        failed = []
+
+        log.info("=" * 60)
+        log.info(f"Building Indicators for {total} symbols")
+        log.info("=" * 60)
+
+        for symbol in tqdm(
+            symbols,
+            desc="Indicators",
+        ):
+
+            try:
+
+                self.build(symbol)
+
+                success += 1
+
+            except Exception as ex:
+
+                log.error(f"{symbol} -> {ex}")
+
+                failed.append(symbol)
+
+        log.info("=" * 60)
+        log.success(f"Success : {success}")
+        log.warning(f"Failed  : {len(failed)}")
+
+        return failed
 
     ########################################################
 
     def validate(self):
 
-        raise NotImplementedError
+        raise NotImplementedError("validate() not implemented.")
 
     ########################################################
 
@@ -98,4 +145,4 @@ class IndicatorAgent(BaseAgent):
 
     def clean(self):
 
-        raise NotImplementedError
+        raise NotImplementedError("clean() not implemented.")

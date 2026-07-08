@@ -58,17 +58,13 @@ class HistoryUpdater:
 
         if last is None:
 
-            log.warning(
-                f"{symbol} has no history."
-            )
+            log.warning(f"{symbol} has no history.")
 
             return
 
         start = pd.Timestamp(last) + timedelta(days=1)
 
-        log.info(
-            f"{symbol} update from {start.date()}"
-        )
+        log.info(f"{symbol} update from {start.date()}")
 
         # Download full history for now.
         # Next release will support incremental download.
@@ -79,9 +75,7 @@ class HistoryUpdater:
             symbol,
         )
 
-        log.success(
-            f"{symbol} updated."
-        )
+        log.success(f"{symbol} updated.")
 
     ########################################################
 

@@ -25,18 +25,14 @@ app = typer.Typer(
 # Universe Commands
 # ---------------------------------------------------------
 
-universe_app = typer.Typer(
-    help="Universe Management Commands"
-)
+universe_app = typer.Typer(help="Universe Management Commands")
 
-app.add_typer(
-    universe_app,
-    name="universe"
-)
+app.add_typer(universe_app, name="universe")
 
 # ---------------------------------------------------------
 # Version
 # ---------------------------------------------------------
+
 
 @app.command()
 def version():
@@ -55,6 +51,7 @@ def version():
 # ---------------------------------------------------------
 # Doctor
 # ---------------------------------------------------------
+
 
 @app.command()
 def doctor():
@@ -80,6 +77,7 @@ def doctor():
 # ---------------------------------------------------------
 # Universe Sync
 # ---------------------------------------------------------
+
 
 @universe_app.command("sync")
 def universe_sync():
@@ -112,6 +110,7 @@ def universe_sync():
 # ---------------------------------------------------------
 # Entry Point
 # ---------------------------------------------------------
+
 
 def main():
 

@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 from datetime import datetime
-from pathlib import Path
 
 import pandas as pd
 
@@ -20,21 +19,11 @@ class UniverseMetadata:
 
     def __init__(self):
 
-        self.output_dir = (
-            config.data_dir /
-            "bronze" /
-            "universe"
-        )
+        self.output_dir = config.data_dir / "bronze" / "universe"
 
-        self.output_dir.mkdir(
-            parents=True,
-            exist_ok=True
-        )
+        self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        self.metadata_file = (
-            self.output_dir /
-            "metadata.json"
-        )
+        self.metadata_file = self.output_dir / "metadata.json"
 
     ########################################################
 
@@ -64,6 +53,4 @@ class UniverseMetadata:
                 indent=4,
             )
 
-        log.info(
-            f"Metadata Saved -> {self.metadata_file}"
-        )
+        log.info(f"Metadata Saved -> {self.metadata_file}")

@@ -45,13 +45,9 @@ class UniverseValidator:
 
         dataframe = self._trim_strings(dataframe)
 
-        dataframe = dataframe.sort_values(
-            by="SYMBOL"
-        ).reset_index(drop=True)
+        dataframe = dataframe.sort_values(by="SYMBOL").reset_index(drop=True)
 
-        log.info(
-            f"Validation Complete : {len(dataframe)} records"
-        )
+        log.info(f"Validation Complete : {len(dataframe)} records")
 
         return dataframe
 
@@ -67,9 +63,7 @@ class UniverseValidator:
                 missing.append(column)
 
         if missing:
-            raise ValueError(
-                f"Missing Columns : {missing}"
-            )
+            raise ValueError(f"Missing Columns : {missing}")
 
     ########################################################
 
@@ -77,15 +71,11 @@ class UniverseValidator:
 
         before = len(dataframe)
 
-        dataframe = dataframe.drop_duplicates(
-            subset=["SYMBOL"]
-        )
+        dataframe = dataframe.drop_duplicates(subset=["SYMBOL"])
 
         after = len(dataframe)
 
-        log.info(
-            f"Removed {before-after} duplicate symbols"
-        )
+        log.info(f"Removed {before-after} duplicate symbols")
 
         return dataframe
 
@@ -93,13 +83,9 @@ class UniverseValidator:
 
     def _remove_empty_symbols(self, dataframe):
 
-        dataframe = dataframe.dropna(
-            subset=["SYMBOL"]
-        )
+        dataframe = dataframe.dropna(subset=["SYMBOL"])
 
-        dataframe = dataframe[
-            dataframe["SYMBOL"].astype(str).str.strip() != ""
-        ]
+        dataframe = dataframe[dataframe["SYMBOL"].astype(str).str.strip() != ""]
 
         return dataframe
 
@@ -107,16 +93,10 @@ class UniverseValidator:
 
     def _trim_strings(self, dataframe):
 
-        object_columns = dataframe.select_dtypes(
-            include="object"
-        ).columns
+        object_columns = dataframe.select_dtypes(include="object").columns
 
         for column in object_columns:
 
-            dataframe[column] = (
-                dataframe[column]
-                .astype(str)
-                .str.strip()
-            )
+            dataframe[column] = dataframe[column].astype(str).str.strip()
 
         return dataframe

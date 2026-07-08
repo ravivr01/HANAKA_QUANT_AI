@@ -11,7 +11,6 @@ Release : 0.9.4
 
 from __future__ import annotations
 
-from datetime import datetime
 
 import polars as pl
 
@@ -20,7 +19,6 @@ from hqai.core.logger import log
 
 
 class IndicatorIndex:
-
     """
     Maintains the indicator_index table.
     """
@@ -51,29 +49,23 @@ class IndicatorIndex:
 
         db.execute(sql)
 
-        log.success(
-            f"Indicator Index updated -> {symbol}"
-        )
+        log.success(f"Indicator Index updated -> {symbol}")
 
     ########################################################
 
     def summary(self):
 
-        return db.query(
-            """
+        return db.query("""
             SELECT *
             FROM indicator_index
             ORDER BY symbol
-            """
-        )
+            """)
 
     ########################################################
 
     def count(self):
 
-        return db.query(
-            """
+        return db.query("""
             SELECT COUNT(*) AS symbols
             FROM indicator_index
-            """
-        )
+            """)

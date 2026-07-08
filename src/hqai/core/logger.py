@@ -2,11 +2,9 @@
 HQAI Logger
 """
 
-from pathlib import Path
 from loguru import logger
 
 from hqai.core.config import config
-
 
 # Create log directory if it doesn't exist
 config.log_dir.mkdir(parents=True, exist_ok=True)

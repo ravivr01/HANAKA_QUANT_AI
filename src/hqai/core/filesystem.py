@@ -33,17 +33,13 @@ class FileSystem:
             "data": config.data_dir,
             "database": config.database_dir,
             "logs": config.log_dir,
-
             "bronze": config.data_dir / "bronze",
             "silver": config.data_dir / "silver",
             "gold": config.data_dir / "gold",
-
             "bronze_universe": config.data_dir / "bronze" / "universe",
             "bronze_history": config.data_dir / "bronze" / "history",
-
             "silver_history": config.data_dir / "silver" / "history",
             "silver_indicators": config.data_dir / "silver" / "indicators",
-
             "gold_features": config.data_dir / "gold" / "features",
             "gold_models": config.data_dir / "gold" / "models",
             "gold_reports": config.data_dir / "gold" / "reports",
@@ -75,9 +71,7 @@ class FileSystem:
         """
 
         if name not in self.directories:
-            raise KeyError(
-                f"Unknown directory: {name}"
-            )
+            raise KeyError(f"Unknown directory: {name}")
 
         return self.directories[name]
 

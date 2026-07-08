@@ -43,11 +43,7 @@ class UniverseAgent:
 
         self.universe = None
 
-        self.output_dir = (
-            config.data_dir /
-            "bronze" /
-            "universe"
-        )
+        self.output_dir = config.data_dir / "bronze" / "universe"
 
         self.downloader = UniverseDownloader()
 
@@ -81,14 +77,9 @@ class UniverseAgent:
 
     def prepare_directories(self):
 
-        self.output_dir.mkdir(
-            parents=True,
-            exist_ok=True
-        )
+        self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        log.info(
-            f"Directory Ready : {self.output_dir}"
-        )
+        log.info(f"Directory Ready : {self.output_dir}")
 
     ############################################################
 
@@ -96,41 +87,29 @@ class UniverseAgent:
 
         self.universe = self.downloader.download()
 
-        log.info(
-            f"Downloaded : {len(self.universe)} records"
-        )
+        log.info(f"Downloaded : {len(self.universe)} records")
 
     ############################################################
 
     def validate(self):
 
-        self.universe = self.validator.validate(
-            self.universe
-        )
+        self.universe = self.validator.validate(self.universe)
 
-        log.info(
-            f"Validated : {len(self.universe)} records"
-        )
+        log.info(f"Validated : {len(self.universe)} records")
 
     ############################################################
 
     def store(self):
 
-        self.storage.save(
-            self.universe
-        )
+        self.storage.save(self.universe)
 
-        log.info(
-            "Universe Stored Successfully"
-        )
+        log.info("Universe Stored Successfully")
 
     ############################################################
 
     def generate_metadata(self):
 
-        self.metadata.generate(
-            self.universe
-        )
+        self.metadata.generate(self.universe)
 
     ############################################################
 

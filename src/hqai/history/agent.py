@@ -18,7 +18,6 @@ from hqai.history.downloader import HistoryDownloader
 
 
 class HistoryAgent:
-
     """
     Main History Orchestrator.
     """

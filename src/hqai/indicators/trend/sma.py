@@ -54,12 +54,8 @@ class SMA(BaseIndicator):
             reference="John Murphy",
             author="HQAI",
             required_columns=["Close"],
-            output_columns=[
-                f"SMA{self.period}"
-            ],
-            parameters={
-                "period": self.period
-            },
+            output_columns=[f"SMA{self.period}"],
+            parameters={"period": self.period},
             warmup_period=self.period,
             complexity="O(n)",
             supports_incremental=True,

@@ -7,7 +7,6 @@ Central configuration for the Hanaka Quant AI platform.
 from pathlib import Path
 from dataclasses import dataclass
 
-
 # ==========================================================
 # Project Information
 # ==========================================================
@@ -67,6 +66,7 @@ SHOW_RAM = True
 # ==========================================================
 # Configuration Object
 # ==========================================================
+
 
 @dataclass
 class HQAIConfig:

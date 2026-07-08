@@ -99,9 +99,7 @@ class HistoryStorage:
         symbol: str,
     ) -> pl.DataFrame:
 
-        return pl.read_parquet(
-            self.symbol_path(symbol)
-        )
+        return pl.read_parquet(self.symbol_path(symbol))
 
     ########################################################
 
@@ -186,21 +184,17 @@ class HistoryStorage:
 
             log.warning(f"{symbol} deleted.")
 
-        db.execute(
-            f"DELETE FROM history_index WHERE symbol='{symbol}'"
-        )
+        db.execute(f"DELETE FROM history_index WHERE symbol='{symbol}'")
 
     ########################################################
 
     def summary(self):
 
-        return db.query(
-            """
+        return db.query("""
             SELECT
                 status,
                 COUNT(*) AS symbols
             FROM history_index
             GROUP BY status
             ORDER BY status
-            """
-        )
+            """)
