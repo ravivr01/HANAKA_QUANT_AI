@@ -1,6 +1,6 @@
 """
 HQAI Database Manager
-Release : 0.2
+Release : 0.3
 Author  : Hanaka Quant AI
 
 Central database layer for the entire HQAI platform.
@@ -43,6 +43,10 @@ class DatabaseManager:
 
         self.connect()
 
+        self.create_schema()
+
+        self.create_history_index()
+
     ########################################################
 
     def connect(self):
@@ -82,13 +86,9 @@ class DatabaseManager:
     def table_exists(self, table_name: str) -> bool:
 
         sql = f"""
-
         SELECT COUNT(*)
-
         FROM information_schema.tables
-
         WHERE table_name='{table_name}'
-
         """
 
         return self.connection.execute(sql).fetchone()[0] > 0
@@ -98,15 +98,10 @@ class DatabaseManager:
     def register_parquet(self, view_name: str, parquet_file: str):
 
         sql = f"""
-
         CREATE OR REPLACE VIEW {view_name}
-
         AS
-
         SELECT *
-
         FROM read_parquet('{parquet_file}')
-
         """
 
         self.execute(sql)
@@ -116,16 +111,38 @@ class DatabaseManager:
     def create_schema(self):
 
         self.execute("""
-
         CREATE SCHEMA IF NOT EXISTS bronze;
 
         CREATE SCHEMA IF NOT EXISTS silver;
 
         CREATE SCHEMA IF NOT EXISTS gold;
-
         """)
 
         log.info("Database schema created")
+
+    ########################################################
+
+    def create_history_index(self):
+
+        self.execute("""
+        CREATE TABLE IF NOT EXISTS history_index (
+
+            symbol VARCHAR PRIMARY KEY,
+
+            rows BIGINT,
+
+            first_date DATE,
+
+            last_date DATE,
+
+            updated_at TIMESTAMP,
+
+            status VARCHAR
+
+        )
+        """)
+
+        log.info("History Index created")
 
     ########################################################
 
