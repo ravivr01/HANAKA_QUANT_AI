@@ -1,0 +1,13 @@
+{
+    "symbol": "INFY",
+    "provider": "yahoo",
+    "exchange": "NSE",
+    "interval": "1d",
+    "period": "5y",
+    "rows": 1250,
+    "columns": 7,
+    "first_date": "2020-01-01",
+    "last_date": "2025-01-01",
+    "downloaded_at": "2026-07-10T06:18:09.927027",
+    "hqai_version": "0.5.0"
+}
