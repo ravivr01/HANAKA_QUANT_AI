@@ -1,10 +1,13 @@
 """
 ==========================================================
-HQAI Yahoo Market Data Provider
-Release : 1.0.5
-Module  : Market Data Engine
+HQAI Yahoo Finance Provider
+Release : R-005-001
+Author  : Hanaka Quant AI
 
-Yahoo Finance implementation of BaseProvider.
+Yahoo Finance Market Data Provider
+Compatible with:
+    Python 3.12
+    yfinance 1.4.x
 ==========================================================
 """
 
@@ -17,12 +20,10 @@ from hqai.core.logger import log
 from hqai.marketdata.base import BaseProvider
 from hqai.marketdata.registry import registry
 
-__all__ = ["YahooProvider"]
-
 
 class YahooProvider(BaseProvider):
     """
-    Yahoo Finance Provider for NSE equities.
+    Yahoo Finance Provider
     """
 
     @property
@@ -50,12 +51,12 @@ class YahooProvider(BaseProvider):
         interval: str = "1d",
     ) -> pd.DataFrame:
 
-        ticker = f"{symbol.upper()}.NS"
+        ticker = f"{symbol}.NS"
 
         log.info(f"Downloading {ticker}")
 
         df = yf.download(
-            ticker,
+            tickers=ticker,
             period=period,
             interval=interval,
             auto_adjust=False,
@@ -68,45 +69,31 @@ class YahooProvider(BaseProvider):
 
         df.reset_index(inplace=True)
 
+        # Flatten MultiIndex columns if present
         if isinstance(df.columns, pd.MultiIndex):
-            df.columns = [column[0] for column in df.columns]
+            df.columns = [c[0] for c in df.columns]
 
-        df.columns = [column.upper().replace(" ", "_") for column in df.columns]
+        # Standardize column names
+        df.columns = [str(col).upper().replace(" ", "_") for col in df.columns]
 
         df["SYMBOL"] = symbol.upper()
 
-        df = (
-            df.sort_values("DATE").drop_duplicates(subset="DATE").reset_index(drop=True)
-        )
+        required = [
+            "DATE",
+            "OPEN",
+            "HIGH",
+            "LOW",
+            "CLOSE",
+            "VOLUME",
+            "SYMBOL",
+        ]
+
+        missing = [c for c in required if c not in df.columns]
+
+        if missing:
+            raise RuntimeError(f"Missing columns: {missing}")
 
         return df
-
-    ########################################################
-
-    def download_many(
-        self,
-        symbols: list[str],
-        period: str = "5y",
-        interval: str = "1d",
-    ) -> dict[str, pd.DataFrame]:
-
-        datasets: dict[str, pd.DataFrame] = {}
-
-        for symbol in symbols:
-
-            try:
-
-                datasets[symbol] = self.download_symbol(
-                    symbol=symbol,
-                    period=period,
-                    interval=interval,
-                )
-
-            except Exception as ex:
-
-                log.error(f"{symbol} -> {ex}")
-
-        return datasets
 
     ########################################################
 
@@ -114,12 +101,12 @@ class YahooProvider(BaseProvider):
 
         try:
 
-            self.download_symbol(
+            df = self.download_symbol(
                 "INFY",
                 period="5d",
             )
 
-            return True
+            return not df.empty
 
         except Exception as ex:
 
@@ -132,16 +119,16 @@ class YahooProvider(BaseProvider):
     def metadata(self) -> dict:
 
         return {
-            "name": "Yahoo Finance",
+            "provider": "Yahoo Finance",
             "exchange": "NSE",
-            "supports_intraday": True,
             "supports_history": True,
-            "supports_incremental": True,
+            "supports_intraday": True,
+            "default_period": "5y",
+            "default_interval": "1d",
         }
 
 
-if not registry.exists("yahoo"):
-    registry.register(
-        "yahoo",
-        YahooProvider,
-    )
+registry.register(
+    "yahoo",
+    YahooProvider,
+)
