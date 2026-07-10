@@ -1,10 +1,10 @@
 """
 ==========================================================
-HQAI Market Data Provider Registry
-Release : 1.0.3
-Module  : Market Data Engine
+HQAI Provider Registry
+Release : R-005-001
+Author  : Hanaka Quant AI
 
-Registers and manages all Market Data Providers.
+Central registry for Market Data Providers.
 ==========================================================
 """
 
@@ -14,33 +14,26 @@ from typing import Type
 
 from hqai.marketdata.base import BaseProvider
 
-__all__ = [
-    "ProviderRegistry",
-    "registry",
-]
-
 
 class ProviderRegistry:
     """
     Registry for all Market Data Providers.
 
-    Example
-    -------
-    >>> registry.register("yahoo", YahooProvider)
-    >>> Provider = registry.get("yahoo")
-    >>> provider = Provider()
+    Examples
+    --------
+    registry.register("yahoo", YahooProvider)
+
+    Provider = registry.get("yahoo")
+
+    provider = Provider()
     """
 
     ########################################################
-    # Constructor
-    ########################################################
 
-    def __init__(self) -> None:
+    def __init__(self):
 
         self._providers: dict[str, Type[BaseProvider]] = {}
 
-    ########################################################
-    # Register Provider
     ########################################################
 
     def register(
@@ -49,7 +42,7 @@ class ProviderRegistry:
         provider: Type[BaseProvider],
     ) -> None:
 
-        key = name.lower()
+        key = name.lower().strip()
 
         if key in self._providers:
 
@@ -58,7 +51,16 @@ class ProviderRegistry:
         self._providers[key] = provider
 
     ########################################################
-    # Get Provider
+
+    def unregister(
+        self,
+        name: str,
+    ) -> None:
+
+        key = name.lower().strip()
+
+        self._providers.pop(key, None)
+
     ########################################################
 
     def get(
@@ -66,16 +68,16 @@ class ProviderRegistry:
         name: str,
     ) -> Type[BaseProvider]:
 
-        key = name.lower()
+        key = name.lower().strip()
 
         if key not in self._providers:
 
-            raise ValueError(f"Unknown provider '{name}'.")
+            available = ", ".join(self.list())
+
+            raise ValueError(f"Unknown provider '{name}'. " f"Available: [{available}]")
 
         return self._providers[key]
 
-    ########################################################
-    # Exists
     ########################################################
 
     def exists(
@@ -83,39 +85,31 @@ class ProviderRegistry:
         name: str,
     ) -> bool:
 
-        return name.lower() in self._providers
+        return name.lower().strip() in self._providers
 
     ########################################################
-    # List Providers
-    ########################################################
 
-    def list(self) -> list[str]:
+    def list(
+        self,
+    ) -> list[str]:
 
         return sorted(self._providers.keys())
 
     ########################################################
-    # Count Providers
-    ########################################################
 
-    def count(self) -> int:
+    def count(
+        self,
+    ) -> int:
 
         return len(self._providers)
 
     ########################################################
-    # Clear Registry (Testing)
-    ########################################################
 
-    def clear(self) -> None:
+    def clear(
+        self,
+    ) -> None:
 
         self._providers.clear()
-
-    ########################################################
-    # len(registry)
-    ########################################################
-
-    def __len__(self) -> int:
-
-        return len(self._providers)
 
 
 registry = ProviderRegistry()
