@@ -1,10 +1,20 @@
 """
 ==========================================================
 HQAI Market Data Storage
-Release : 1.0.4
+Release : R-005-001
 Author  : Hanaka Quant AI
 
 Bronze Layer Storage Manager
+
+Directory Structure
+
+data/
+    bronze/
+        NSE/
+            yahoo/
+                INFY/
+                    history.parquet
+                    metadata.json
 ==========================================================
 """
 
@@ -22,29 +32,26 @@ from hqai.core.logger import log
 
 class MarketDataStorage:
     """
-    Bronze Layer Storage.
-
-    data/
-        bronze/
-            equity/
-                NSE/
-                    INFY/
-                        history.parquet
-                        metadata.json
+    Bronze Layer Storage Manager.
     """
 
     ########################################################
 
-    def __init__(self):
+    def __init__(
+        self,
+        exchange: str = "NSE",
+        provider: str = "yahoo",
+    ):
 
-        self.root = config.bronze_dir / "equity" / "NSE"
+        self.exchange = exchange.upper()
+        self.provider = provider.lower()
+
+        self.root = config.bronze_dir / self.exchange / self.provider
 
         self.root.mkdir(
             parents=True,
             exist_ok=True,
         )
-
-        log.info(f"Bronze Storage -> {self.root}")
 
     ########################################################
 
@@ -88,8 +95,7 @@ class MarketDataStorage:
         self,
         symbol: str,
         df: pl.DataFrame,
-        provider: str,
-    ):
+    ) -> None:
 
         folder = self.symbol_path(symbol)
 
@@ -98,19 +104,18 @@ class MarketDataStorage:
             exist_ok=True,
         )
 
-        parquet = self.parquet_file(symbol)
-
-        df.write_parquet(parquet)
+        df.write_parquet(self.parquet_file(symbol))
 
         metadata = {
-            "symbol": symbol,
-            "provider": provider,
+            "symbol": symbol.upper(),
+            "provider": self.provider,
+            "exchange": self.exchange,
             "rows": df.height,
             "columns": df.width,
             "first_date": str(df["DATE"].min()),
             "last_date": str(df["DATE"].max()),
-            "updated_at": datetime.now().isoformat(),
-            "version": "1.0.0",
+            "downloaded_at": datetime.now().isoformat(),
+            "hqai_version": "0.5.0",
         }
 
         with open(
@@ -125,7 +130,7 @@ class MarketDataStorage:
                 indent=4,
             )
 
-        log.info(f"Saved -> {symbol}")
+        log.info(f"Saved {symbol}")
 
     ########################################################
 
@@ -141,23 +146,21 @@ class MarketDataStorage:
     def delete(
         self,
         symbol: str,
-    ):
+    ) -> None:
 
         parquet = self.parquet_file(symbol)
 
         metadata = self.metadata_file(symbol)
 
         if parquet.exists():
-
             parquet.unlink()
 
         if metadata.exists():
-
             metadata.unlink()
 
     ########################################################
 
-    def metadata(
+    def read_metadata(
         self,
         symbol: str,
     ) -> dict:
@@ -177,7 +180,6 @@ class MarketDataStorage:
     ) -> list[str]:
 
         if not self.root.exists():
-
             return []
 
         return sorted(path.name for path in self.root.iterdir() if path.is_dir())
@@ -189,6 +191,8 @@ class MarketDataStorage:
     ) -> dict:
 
         return {
-            "symbols": len(self.list_symbols()),
+            "exchange": self.exchange,
+            "provider": self.provider,
             "location": str(self.root),
+            "symbols": len(self.list_symbols()),
         }

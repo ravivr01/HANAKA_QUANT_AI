@@ -1,11 +1,10 @@
 """
 ==========================================================
 HQAI Market Data Metadata
-Release : 1.0.6
-Module  : Market Data Engine
+Release : R-005-001
 Author  : Hanaka Quant AI
 
-Metadata Manager for Bronze Layer datasets.
+Metadata object for Market Data.
 ==========================================================
 """
 
@@ -20,39 +19,60 @@ from pathlib import Path
 @dataclass
 class MarketDataMetadata:
     """
-    Metadata associated with a Bronze Layer dataset.
+    Metadata describing a downloaded dataset.
     """
 
     symbol: str
-
-    exchange: str
-
     provider: str
+    exchange: str
+    interval: str
+    period: str
 
     rows: int
-
     columns: int
 
     first_date: str
-
     last_date: str
 
-    updated_at: str
+    downloaded_at: str
 
-    version: str = "1.0.0"
-
-    status: str = "SUCCESS"
+    hqai_version: str = "0.5.0"
 
     ########################################################
-    # Convert to Dictionary
+
+    @classmethod
+    def create(
+        cls,
+        symbol: str,
+        provider: str,
+        exchange: str,
+        interval: str,
+        period: str,
+        rows: int,
+        columns: int,
+        first_date,
+        last_date,
+    ):
+
+        return cls(
+            symbol=symbol.upper(),
+            provider=provider,
+            exchange=exchange,
+            interval=interval,
+            period=period,
+            rows=rows,
+            columns=columns,
+            first_date=str(first_date),
+            last_date=str(last_date),
+            downloaded_at=datetime.now().isoformat(),
+        )
+
     ########################################################
 
     def to_dict(self) -> dict:
 
         return asdict(self)
 
-    ########################################################
-    # Save Metadata
     ########################################################
 
     def save(
@@ -78,8 +98,6 @@ class MarketDataMetadata:
             )
 
     ########################################################
-    # Load Metadata
-    ########################################################
 
     @classmethod
     def load(
@@ -96,44 +114,3 @@ class MarketDataMetadata:
             data = json.load(fp)
 
         return cls(**data)
-
-    ########################################################
-    # Factory Method
-    ########################################################
-
-    @classmethod
-    def create(
-        cls,
-        symbol: str,
-        provider: str,
-        rows: int,
-        columns: int,
-        first_date,
-        last_date,
-        exchange: str = "NSE",
-    ):
-
-        return cls(
-            symbol=symbol.upper(),
-            exchange=exchange,
-            provider=provider,
-            rows=rows,
-            columns=columns,
-            first_date=str(first_date),
-            last_date=str(last_date),
-            updated_at=datetime.now().isoformat(),
-            version="1.0.0",
-            status="SUCCESS",
-        )
-
-    ########################################################
-    # Pretty Representation
-    ########################################################
-
-    def __str__(self):
-
-        return (
-            f"{self.symbol} | "
-            f"{self.rows} rows | "
-            f"{self.first_date} -> {self.last_date}"
-        )
