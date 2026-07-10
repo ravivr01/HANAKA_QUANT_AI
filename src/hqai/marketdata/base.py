@@ -1,10 +1,10 @@
 """
 ==========================================================
-HQAI Market Data Base Provider
-Release : 1.0.2
-Module  : Market Data Engine
+HQAI Market Data Provider Interface
+Release : R-005-001
+Author  : Hanaka Quant AI
 
-Defines the interface for all market data providers.
+Abstract interface for all Market Data Providers.
 ==========================================================
 """
 
@@ -14,48 +14,40 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 
-__all__ = [
-    "BaseProvider",
-]
-
 
 class BaseProvider(ABC):
     """
-    Abstract base class for all market data providers.
+    Abstract Market Data Provider.
 
     Every provider (Yahoo, NSE, Polygon, AlphaVantage, etc.)
     must implement this interface.
     """
 
-    ########################################################
-    # Provider Name
-    ########################################################
-
     @property
     @abstractmethod
     def name(self) -> str:
         """Provider name."""
-        ...
-
-    ########################################################
-    # Connection
-    ########################################################
+        raise NotImplementedError
 
     @abstractmethod
     def connect(self) -> None:
-        """Open provider connection."""
-        ...
-
-    ########################################################
+        """Initialize provider."""
+        raise NotImplementedError
 
     @abstractmethod
     def disconnect(self) -> None:
-        """Close provider connection."""
-        ...
+        """Close provider."""
+        raise NotImplementedError
 
-    ########################################################
-    # Download One Symbol
-    ########################################################
+    @abstractmethod
+    def validate(self) -> bool:
+        """Return True if provider is healthy."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def metadata(self) -> dict:
+        """Provider metadata."""
+        raise NotImplementedError
 
     @abstractmethod
     def download_symbol(
@@ -65,15 +57,21 @@ class BaseProvider(ABC):
         interval: str = "1d",
     ) -> pd.DataFrame:
         """
-        Download historical market data for one symbol.
+        Download one symbol.
+
+        Parameters
+        ----------
+        symbol
+            NSE symbol without '.NS'
+
+        period
+            Default 5 years
+
+        interval
+            Default daily
         """
-        ...
+        raise NotImplementedError
 
-    ########################################################
-    # Download Multiple Symbols
-    ########################################################
-
-    @abstractmethod
     def download_many(
         self,
         symbols: list[str],
@@ -81,28 +79,19 @@ class BaseProvider(ABC):
         interval: str = "1d",
     ) -> dict[str, pd.DataFrame]:
         """
-        Download historical data for multiple symbols.
-        """
-        ...
+        Default sequential implementation.
 
-    ########################################################
-    # Validation
-    ########################################################
+        Providers may override this with a faster
+        implementation if supported.
+        """
 
-    @abstractmethod
-    def validate(self) -> bool:
-        """
-        Validate provider connectivity.
-        """
-        ...
+        result: dict[str, pd.DataFrame] = {}
 
-    ########################################################
-    # Metadata
-    ########################################################
+        for symbol in symbols:
+            result[symbol] = self.download_symbol(
+                symbol=symbol,
+                period=period,
+                interval=interval,
+            )
 
-    @abstractmethod
-    def metadata(self) -> dict:
-        """
-        Return provider metadata.
-        """
-        ...
+        return result
