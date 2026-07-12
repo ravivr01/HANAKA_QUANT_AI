@@ -1,7 +1,7 @@
 """
 ==========================================================
 HQAI Database Manager
-Release : 0.3
+Release : 0.4
 Author  : Hanaka Quant AI
 
 Central database layer for the entire HQAI platform.
@@ -79,9 +79,25 @@ class DatabaseManager:
 
     ########################################################
 
-    def execute(self, sql: str):
+    def execute(
+        self,
+        sql: str,
+    ):
 
         return self.connection.execute(sql)
+
+    ########################################################
+
+    def execute_many(
+        self,
+        sql: str,
+        parameters,
+    ):
+
+        return self.connection.executemany(
+            sql,
+            parameters,
+        )
 
     ########################################################
 
@@ -91,6 +107,15 @@ class DatabaseManager:
     ) -> pl.DataFrame:
 
         return self.connection.sql(sql).pl()
+
+    ########################################################
+
+    def execute_dataframe(
+        self,
+        sql: str,
+    ) -> pl.DataFrame:
+
+        return self.connection.execute(sql).pl()
 
     ########################################################
 
@@ -134,7 +159,7 @@ class DatabaseManager:
             CREATE SCHEMA IF NOT EXISTS silver;
 
             CREATE SCHEMA IF NOT EXISTS gold;
-            """)
+        """)
 
         log.info("Database schema created")
 
@@ -158,9 +183,36 @@ class DatabaseManager:
                 status VARCHAR
 
             )
-            """)
+        """)
 
         log.info("History Index created")
+
+    ########################################################
+
+    def update_history_index(
+        self,
+        symbol: str,
+        rows: int,
+        first_date,
+        last_date,
+        status: str = "SUCCESS",
+    ):
+
+        self.connection.execute(
+            """
+            INSERT OR REPLACE INTO history_index
+            VALUES (
+                ?, ?, ?, ?, CURRENT_TIMESTAMP, ?
+            )
+            """,
+            (
+                symbol,
+                rows,
+                first_date,
+                last_date,
+                status,
+            ),
+        )
 
     ########################################################
 
@@ -186,7 +238,7 @@ class DatabaseManager:
                 status VARCHAR
 
             )
-            """)
+        """)
 
         log.info("Indicator Index created")
 
@@ -197,13 +249,17 @@ class DatabaseManager:
         filename: str,
     ):
 
-        self.execute(f"EXPORT DATABASE '{filename}'")
+        self.execute(
+            f"EXPORT DATABASE '{filename}'"
+        )
 
         log.info(f"Backup created -> {filename}")
 
     ########################################################
 
-    def health_check(self) -> bool:
+    def health_check(
+        self,
+    ) -> bool:
 
         try:
 
