@@ -5,7 +5,7 @@ HQAI Market Data Agent
 
 Coordinates Market Data download pipeline.
 
-Release : 1.0.8
+Release : 1.1.0
 Author  : Hanaka Quant AI
 """
 
@@ -34,6 +34,7 @@ class MarketDataAgent:
     - Validate data
     - Store Bronze data
     - Create metadata
+    - Synchronize entire universe
     """
 
     ########################################################
@@ -98,6 +99,68 @@ class MarketDataAgent:
         )
 
         log.info(f"{symbol} completed.")
+
+    ########################################################
+
+    def sync_universe(self):
+
+        """
+        Download historical data for every symbol
+        in the Universe table.
+        """
+
+        from hqai.core.database import db
+
+        symbols = db.query(
+            """
+            SELECT SYMBOL
+            FROM universe
+            ORDER BY SYMBOL
+            """
+        )
+
+        total = symbols.height
+
+        success = 0
+
+        failed = 0
+
+        log.info("=" * 70)
+        log.info("Starting Universe Synchronization")
+        log.info(f"Total Symbols : {total}")
+        log.info("=" * 70)
+
+        for index, row in enumerate(
+            symbols.iter_rows(named=True),
+            start=1,
+        ):
+
+            symbol = row["SYMBOL"]
+
+            log.info(
+                f"[{index}/{total}] {symbol}"
+            )
+
+            try:
+
+                self.build(symbol)
+
+                success += 1
+
+            except Exception as ex:
+
+                failed += 1
+
+                log.error(
+                    f"{symbol} -> {ex}"
+                )
+
+        log.info("=" * 70)
+        log.info("Universe Synchronization Complete")
+        log.info(f"Total   : {total}")
+        log.info(f"Success : {success}")
+        log.info(f"Failed  : {failed}")
+        log.info("=" * 70)
 
     ########################################################
 
