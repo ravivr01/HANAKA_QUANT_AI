@@ -1,33 +1,39 @@
 """
 ==========================================================
 HQAI Market Data Agent
-Release : R-005-005A
-Module  : Market Data Engine
-
-Universe Loader
 ==========================================================
+
+Coordinates Market Data download pipeline.
+
+Release : 1.0.8
+Author  : Hanaka Quant AI
 """
 
 from __future__ import annotations
 
 import polars as pl
 
-from hqai.core.database import db
 from hqai.core.logger import log
 
-# Ensure provider registration
-import hqai.marketdata.providers.yahoo  # noqa: F401
+# Force provider registration
+import hqai.marketdata.providers  # noqa: F401
 
 from hqai.marketdata.registry import registry
 from hqai.marketdata.storage import MarketDataStorage
 from hqai.marketdata.validator import MarketDataValidator
+from hqai.marketdata.metadata import MarketDataMetadata
 
 
 class MarketDataAgent:
     """
-    HQAI Market Data Agent.
+    HQAI Market Data Agent
 
-    Coordinates the Market Data Engine.
+    Responsibilities
+    ----------------
+    - Download market data
+    - Validate data
+    - Store Bronze data
+    - Create metadata
     """
 
     ########################################################
@@ -45,58 +51,72 @@ class MarketDataAgent:
 
         self.validator = MarketDataValidator()
 
-        log.info(f"Provider : {self.provider.name}")
+    ########################################################
+
+    def build(
+        self,
+        symbol: str,
+    ):
+
+        log.info(f"Downloading {symbol}")
+
+        df = self.provider.download_symbol(symbol)
+
+        if isinstance(df, pl.DataFrame):
+
+            pdf = df.to_pandas()
+
+        else:
+
+            pdf = df
+
+        pdf.columns = [
+            column.upper().replace(" ", "_")
+            for column in pdf.columns
+        ]
+
+        dataframe = pl.from_pandas(pdf)
+
+        self.validator.validate(dataframe)
+
+        self.storage.save(
+            symbol=symbol,
+            df=dataframe,
+            provider=self.provider.name,
+        )
+
+        metadata = MarketDataMetadata.create(
+            symbol=symbol,
+            provider=self.provider.name,
+            rows=dataframe.height,
+            first_date=dataframe["DATE"].min(),
+            last_date=dataframe["DATE"].max(),
+        )
+
+        metadata.save(
+            self.storage.metadata_file(symbol)
+        )
+
+        log.info(f"{symbol} completed.")
 
     ########################################################
 
-    def universe(self) -> pl.DataFrame:
-        """
-        Load the production NSE universe.
-        """
+    def validate(self):
 
-        return db.query("""
-            SELECT SYMBOL
-            FROM universe
-            WHERE SERIES='EQ'
-            ORDER BY SYMBOL
-            """)
+        return self.provider.validate()
 
     ########################################################
 
-    def universe_symbols(self) -> list[str]:
+    def summary(self):
 
-        universe = self.universe()
-
-        return universe["SYMBOL"].to_list()
+        return self.storage.summary()
 
     ########################################################
 
-    def summary(self) -> dict:
+    def clean(self):
 
-        symbols = self.universe_symbols()
+        for symbol in self.storage.list_symbols():
 
-        return {
-            "provider": self.provider.name,
-            "universe": len(symbols),
-            "storage": self.storage.summary(),
-        }
+            self.storage.delete(symbol)
 
-    ########################################################
-
-    def sync(self):
-
-        symbols = self.universe_symbols()
-
-        log.info("=" * 60)
-
-        log.info("HQAI MARKET DATA ENGINE")
-
-        log.info("=" * 60)
-
-        log.info(f"Provider : {self.provider.name}")
-
-        log.info(f"Universe : {len(symbols)} symbols")
-
-        log.info("=" * 60)
-
-        return symbols
+        log.info("Bronze storage cleaned.")
