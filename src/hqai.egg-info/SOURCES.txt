@@ -38,6 +38,7 @@ src/hqai/history/downloader_v2.py
 src/hqai/history/index.py
 src/hqai/history/indexer.py
 src/hqai/history/models.py
+src/hqai/history/stats.py
 src/hqai/history/storage.py
 src/hqai/history/updater.py
 src/hqai/indicators/__init__.py
