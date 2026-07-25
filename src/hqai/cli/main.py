@@ -10,6 +10,8 @@ import typer
 
 from hqai import __version__
 from hqai.universe.agent import UniverseAgent
+from hqai.cli.history import app as history_app
+from hqai.cli.update import app as update_app
 
 # ---------------------------------------------------------
 # Root Application
@@ -28,6 +30,8 @@ app = typer.Typer(
 universe_app = typer.Typer(help="Universe Management Commands")
 
 app.add_typer(universe_app, name="universe")
+app.add_typer(history_app, name="history")
+app.add_typer(update_app, name="update")
 
 # ---------------------------------------------------------
 # Version

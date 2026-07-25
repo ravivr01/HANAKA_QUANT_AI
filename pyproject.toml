@@ -14,7 +14,39 @@ build-backend = "setuptools.build_meta"
 name = "hqai"
 version = "0.6.0"
 description = "Hanaka Quant AI Platform"
+readme = "README.md"
 requires-python = ">=3.12"
+
+dependencies = [
+    "typer>=0.12",
+    "rich>=13.0",
+    "duckdb",
+    "polars",
+    "pandas",
+    "yfinance",
+    "loguru",
+    "tqdm",
+]
+
+###############################################################################
+# CLI ENTRY POINT
+###############################################################################
+
+[project.scripts]
+
+hqai = "hqai.cli.main:main"
+
+###############################################################################
+# Package Discovery
+###############################################################################
+
+[tool.setuptools]
+
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+
+where = ["src"]
 
 ###############################################################################
 # Black
@@ -33,6 +65,7 @@ line-length = 88
 target-version = "py312"
 
 [tool.ruff.lint]
+
 select = [
     "E",
     "F",
@@ -45,11 +78,15 @@ select = [
 ###############################################################################
 
 [tool.mypy]
+
 python_version = "3.12"
 
 warn_return_any = true
+
 warn_unused_configs = true
+
 check_untyped_defs = true
+
 ignore_missing_imports = true
 
 ###############################################################################

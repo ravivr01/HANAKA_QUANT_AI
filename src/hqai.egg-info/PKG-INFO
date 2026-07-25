@@ -1,9 +1,16 @@
 Metadata-Version: 2.4
 Name: hqai
-Version: 0.1.0
-Summary: Hanaka Quant AI
+Version: 0.6.0
+Summary: Hanaka Quant AI Platform
 Requires-Python: >=3.12
+Description-Content-Type: text/markdown
 License-File: LICENSE
-Requires-Dist: typer>=0.16
-Requires-Dist: rich>=14.0
+Requires-Dist: typer>=0.12
+Requires-Dist: rich>=13.0
+Requires-Dist: duckdb
+Requires-Dist: polars
+Requires-Dist: pandas
+Requires-Dist: yfinance
+Requires-Dist: loguru
+Requires-Dist: tqdm
 Dynamic: license-file
