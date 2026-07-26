@@ -4,68 +4,111 @@ HQAI Feature CLI
 ==========================================================
 """
 
+from pathlib import Path
+
 import typer
+
+from hqai.features.agent import FeatureAgent
+from hqai.features.storage import FeatureStorage
+from hqai.features.config import feature_config
 
 app = typer.Typer(
     help="Feature Management Commands"
 )
 
 
+# ---------------------------------------------------------
+# Build
+# ---------------------------------------------------------
+
 @app.command("build")
 def build():
-    """
-    Build Features
-    """
 
-    typer.echo()
-    typer.echo("=" * 60)
-    typer.echo("HQAI FEATURE BUILD")
-    typer.echo("=" * 60)
-    typer.echo()
-    typer.echo("Feature Builder - Coming Soon")
-    typer.echo()
+    FeatureAgent().run()
 
+
+# ---------------------------------------------------------
+# Verify
+# ---------------------------------------------------------
 
 @app.command("verify")
 def verify():
-    """
-    Verify Features
-    """
 
-    typer.echo()
-    typer.echo("=" * 60)
-    typer.echo("HQAI FEATURE VERIFY")
-    typer.echo("=" * 60)
-    typer.echo()
-    typer.echo("Feature Verification - Coming Soon")
-    typer.echo()
+    history = set()
 
+    # Flat files
+    for file in feature_config.HISTORY_DIR.glob("*.parquet"):
+        history.add(file.stem)
+
+    # Nested files
+    for file in feature_config.HISTORY_DIR.glob("*/history.parquet"):
+        history.add(file.parent.name)
+
+    storage = FeatureStorage()
+
+    features = set(storage.list_symbols())
+
+    missing = sorted(history - features)
+
+    extra = sorted(features - history)
+
+    print()
+
+    print("=" * 70)
+    print("HQAI FEATURE VERIFICATION")
+    print("=" * 70)
+
+    print(f"History Files : {len(history)}")
+    print(f"Feature Files : {len(features)}")
+    print(f"Missing       : {len(missing)}")
+    print(f"Extra         : {len(extra)}")
+
+    if missing:
+
+        print("\nMissing Symbols")
+
+        for symbol in missing:
+
+            print(symbol)
+
+    if extra:
+
+        print("\nExtra Symbols")
+
+        for symbol in extra:
+
+            print(symbol)
+
+    print("=" * 70)
+
+
+# ---------------------------------------------------------
+# Statistics
+# ---------------------------------------------------------
 
 @app.command("stats")
 def stats():
-    """
-    Feature Statistics
-    """
 
-    typer.echo()
-    typer.echo("=" * 60)
-    typer.echo("HQAI FEATURE STATISTICS")
-    typer.echo("=" * 60)
-    typer.echo()
-    typer.echo("Feature Statistics - Coming Soon")
-    typer.echo()
+    storage = FeatureStorage()
 
+    print()
+
+    print("=" * 70)
+    print("HQAI FEATURE STATISTICS")
+    print("=" * 70)
+
+    print(f"Directory      : {storage.feature_dir}")
+    print(f"Feature Files  : {storage.count()}")
+    print(f"Disk Usage MB  : {storage.disk_usage():.2f}")
+
+    print("=" * 70)
+
+
+# ---------------------------------------------------------
+# Update
+# ---------------------------------------------------------
 
 @app.command("update")
 def update():
-    """
-    Update Features
-    """
 
-    typer.echo()
-    typer.echo("=" * 60)
-    typer.echo("HQAI FEATURE UPDATE")
-    typer.echo("=" * 60)
-    typer.echo()
     typer.echo("Feature Update - Coming Soon")
-    typer.echo()
