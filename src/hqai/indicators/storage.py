@@ -3,10 +3,11 @@
 HQAI Indicator Storage
 ==========================================================
 
-Stores indicator datasets in the Silver Layer.
+Stores calculated indicators as Parquet files.
 
 Author  : Ravi Varma
-Release : 0.9.1
+Version : 0.9.0
+==========================================================
 """
 
 from __future__ import annotations
@@ -14,101 +15,154 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
-import polars as pl
 
-from hqai.core.database import db
 from hqai.core.logger import log
+from hqai.indicators.config import indicator_config
 
 
 class IndicatorStorage:
     """
-    Silver Layer Storage for Indicators.
+    Handles Indicator Repository.
     """
 
     def __init__(self):
 
-        self.output = Path("data/silver/indicators")
+        self.indicator_dir = indicator_config.INDICATOR_DIR
 
-        self.output.mkdir(
-            parents=True,
-            exist_ok=True,
-        )
+    # --------------------------------------------------
+    # File Path
+    # --------------------------------------------------
 
-    ########################################################
-
-    def symbol_path(
+    def indicator_file(
         self,
         symbol: str,
     ) -> Path:
 
-        folder = self.output / symbol
+        return self.indicator_dir / f"{symbol}.parquet"
 
-        folder.mkdir(
-            parents=True,
-            exist_ok=True,
-        )
-
-        return folder / "indicators.parquet"
-
-    ########################################################
-
-    def save(
-        self,
-        df: pd.DataFrame,
-        symbol: str,
-    ):
-
-        file = self.symbol_path(symbol)
-
-        pl.from_pandas(df).write_parquet(file)
-
-        log.success(f"Saved {file}")
-
-        return file
-
-    ########################################################
-
-    def load(
-        self,
-        symbol: str,
-    ) -> pl.DataFrame:
-
-        return pl.read_parquet(self.symbol_path(symbol))
-
-    ########################################################
+    # --------------------------------------------------
+    # Exists
+    # --------------------------------------------------
 
     def exists(
         self,
         symbol: str,
     ) -> bool:
 
-        return self.symbol_path(symbol).exists()
+        return self.indicator_file(symbol).exists()
 
-    ########################################################
+    # --------------------------------------------------
+    # Save
+    # --------------------------------------------------
 
-    def register(
+    def save(
         self,
         symbol: str,
-    ):
+        dataframe: pd.DataFrame,
+    ) -> Path:
 
-        db.register_parquet(
-            f"indicators_{symbol.lower()}",
-            str(self.symbol_path(symbol)),
+        file = self.indicator_file(symbol)
+
+        dataframe.to_parquet(
+            file,
+            compression=indicator_config.COMPRESSION,
+            index=False,
         )
 
-        log.info(f"Registered indicators_{symbol.lower()}")
+        log.info(f"Indicator Saved -> {file.name}")
 
-    ########################################################
+        return file
+
+    # --------------------------------------------------
+    # Load
+    # --------------------------------------------------
+
+    def load(
+        self,
+        symbol: str,
+    ) -> pd.DataFrame:
+
+        file = self.indicator_file(symbol)
+
+        if not file.exists():
+
+            raise FileNotFoundError(file)
+
+        return pd.read_parquet(file)
+
+    # --------------------------------------------------
+    # Delete
+    # --------------------------------------------------
 
     def delete(
         self,
         symbol: str,
     ):
 
-        file = self.symbol_path(symbol)
+        file = self.indicator_file(symbol)
 
         if file.exists():
 
             file.unlink()
 
-            log.warning(f"Deleted {file}")
+            log.info(f"Deleted -> {file.name}")
+
+    # --------------------------------------------------
+    # Symbols
+    # --------------------------------------------------
+
+    def list_symbols(self):
+
+        return sorted(
+
+            file.stem
+
+            for file in self.indicator_dir.glob("*.parquet")
+
+        )
+
+    # --------------------------------------------------
+    # Count
+    # --------------------------------------------------
+
+    def count(self) -> int:
+
+        return len(self.list_symbols())
+
+    # --------------------------------------------------
+    # Disk Usage
+    # --------------------------------------------------
+
+    def disk_usage(self) -> float:
+
+        total = sum(
+
+            file.stat().st_size
+
+            for file in self.indicator_dir.glob("*.parquet")
+
+        )
+
+        return total / (1024 * 1024)
+
+    # --------------------------------------------------
+    # Summary
+    # --------------------------------------------------
+
+    def summary(self):
+
+        print()
+
+        print("=" * 70)
+
+        print("HQAI INDICATOR STORAGE")
+
+        print("=" * 70)
+
+        print(f"Directory : {self.indicator_dir}")
+
+        print(f"Files     : {self.count()}")
+
+        print(f"Disk MB   : {self.disk_usage():.2f}")
+
+        print("=" * 70)
