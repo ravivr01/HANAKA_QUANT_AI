@@ -1,172 +1,119 @@
-src/hqai.egg-info/dependency_links.txt
-src/hqai.egg-info/entry_points.txt
-src/hqai.egg-info/PKG-INFO
-src/hqai.egg-info/requires.txt
-src/hqai.egg-info/SOURCES.txt
-src/hqai.egg-info/top_level.txt
-src/hqai/__init__.py
-src/hqai/__pycache__/__init__.cpython-312.pyc
-src/hqai/cli/__init__.py
-src/hqai/cli/__pycache__/__init__.cpython-312.pyc
-src/hqai/cli/__pycache__/main.cpython-312.pyc
-src/hqai/cli/__pycache__/universe.cpython-312.pyc
-src/hqai/cli/main.py
-src/hqai/cli/universe.py
-src/hqai/core/__init__.py
-src/hqai/core/__pycache__/__init__.cpython-312.pyc
-src/hqai/core/__pycache__/base_agent.cpython-312.pyc
-src/hqai/core/__pycache__/config.cpython-312.pyc
-src/hqai/core/__pycache__/constants.cpython-312.pyc
-src/hqai/core/__pycache__/database.cpython-312.pyc
-src/hqai/core/__pycache__/exceptions.cpython-312.pyc
-src/hqai/core/__pycache__/filesystem.cpython-312.pyc
-src/hqai/core/__pycache__/logger.cpython-312.pyc
-src/hqai/core/__pycache__/progress.cpython-312.pyc
-src/hqai/core/base_agent.py
-src/hqai/core/config.py
-src/hqai/core/constants.py
-src/hqai/core/database.py
-src/hqai/core/database.py.save
-src/hqai/core/exceptions.py
-src/hqai/core/filesystem.py
-src/hqai/core/logger.py
-src/hqai/core/progress.py
-src/hqai/dashboard/__init__.py
-src/hqai/dashboard/__pycache__/__init__.cpython-312.pyc
-src/hqai/data/__init__.py
-src/hqai/data/__pycache__/__init__.cpython-312.pyc
-src/hqai/data/__pycache__/downloader.cpython-312.pyc
-src/hqai/data/__pycache__/metadata.cpython-312.pyc
-src/hqai/data/__pycache__/storage.cpython-312.pyc
-src/hqai/data/__pycache__/universe.cpython-312.pyc
-src/hqai/data/__pycache__/validator.cpython-312.pyc
-src/hqai/data/downloader.py
-src/hqai/data/metadata.py
-src/hqai/data/storage.py
-src/hqai/data/universe.py
-src/hqai/data/validator.py
-src/hqai/database/__init__.py
-src/hqai/database/__pycache__/__init__.cpython-312.pyc
-src/hqai/database/__pycache__/history_repository.cpython-312.pyc
-src/hqai/database/history_repository.py
-src/hqai/features/__init__.py
-src/hqai/features/__pycache__/__init__.cpython-312.pyc
-src/hqai/history/__pycache__/agent.cpython-312.pyc
-src/hqai/history/__pycache__/downloader.cpython-312.pyc
-src/hqai/history/__pycache__/index.cpython-312.pyc
-src/hqai/history/__pycache__/indexer.cpython-312.pyc
-src/hqai/history/__pycache__/models.cpython-312.pyc
-src/hqai/history/__pycache__/storage.cpython-312.pyc
-src/hqai/history/__pycache__/updater.cpython-312.pyc
-src/hqai/history/agent.py
-src/hqai/history/downloader_v2.py
-src/hqai/history/downloader.py
-src/hqai/history/index.py
-src/hqai/history/indexer.py
-src/hqai/history/models.py
-src/hqai/history/storage.py
-src/hqai/history/updater.py
-src/hqai/indicators/__init__.py
-src/hqai/indicators/__pycache__/__init__.cpython-312.pyc
-src/hqai/indicators/__pycache__/agent.cpython-312.pyc
-src/hqai/indicators/__pycache__/base.cpython-312.pyc
-src/hqai/indicators/__pycache__/config.cpython-312.pyc
-src/hqai/indicators/__pycache__/exceptions.cpython-312.pyc
-src/hqai/indicators/__pycache__/index.cpython-312.pyc
-src/hqai/indicators/__pycache__/metadata.cpython-312.pyc
-src/hqai/indicators/__pycache__/registry.cpython-312.pyc
-src/hqai/indicators/__pycache__/schemas.cpython-312.pyc
-src/hqai/indicators/__pycache__/storage.cpython-312.pyc
-src/hqai/indicators/__pycache__/validator.cpython-312.pyc
-src/hqai/indicators/agent.py
-src/hqai/indicators/base.py
-src/hqai/indicators/config.py
-src/hqai/indicators/exceptions.py
-src/hqai/indicators/index.py
-src/hqai/indicators/metadata.py
-src/hqai/indicators/registry.py
-src/hqai/indicators/schemas.py
-src/hqai/indicators/storage.py
-src/hqai/indicators/trend/__init__.py
-src/hqai/indicators/trend/__pycache__/__init__.cpython-312.pyc
-src/hqai/indicators/trend/__pycache__/sma.cpython-312.pyc
-src/hqai/indicators/trend/sma.py
-src/hqai/indicators/validator.py
-src/hqai/marketdata/__init__.py
-src/hqai/marketdata/__pycache__/__init__.cpython-312.pyc
-src/hqai/marketdata/__pycache__/agent.cpython-312.pyc
-src/hqai/marketdata/__pycache__/base.cpython-312.pyc
-src/hqai/marketdata/__pycache__/metadata.cpython-312.pyc
-src/hqai/marketdata/__pycache__/registry.cpython-312.pyc
-src/hqai/marketdata/__pycache__/storage.cpython-312.pyc
-src/hqai/marketdata/__pycache__/validator.cpython-312.pyc
-src/hqai/marketdata/agent.py
-src/hqai/marketdata/base.py
-src/hqai/marketdata/metadata.py
-src/hqai/marketdata/providers/__init__.py
-src/hqai/marketdata/providers/__pycache__/__init__.cpython-312.pyc
-src/hqai/marketdata/providers/__pycache__/yahoo.cpython-312.pyc
-src/hqai/marketdata/providers/csv.py
-src/hqai/marketdata/providers/kite.py
-src/hqai/marketdata/providers/nse.py
-src/hqai/marketdata/providers/upstox.py
-src/hqai/marketdata/providers/yahoo.py
-src/hqai/marketdata/registry.py
-src/hqai/marketdata/storage.py
-src/hqai/marketdata/validator.py
-src/hqai/math/__init__.py
-src/hqai/math/__pycache__/__init__.cpython-312.pyc
-src/hqai/math/finance/__init__.py
-src/hqai/math/finance/__pycache__/__init__.cpython-312.pyc
-src/hqai/math/finance/__pycache__/log_returns.cpython-312.pyc
-src/hqai/math/finance/__pycache__/returns.cpython-312.pyc
-src/hqai/math/finance/__pycache__/true_range.cpython-312.pyc
-src/hqai/math/finance/log_returns.py
-src/hqai/math/finance/returns.py
-src/hqai/math/finance/true_range.py
-src/hqai/math/rolling/__init__.py
-src/hqai/math/rolling/__pycache__/__init__.cpython-312.pyc
-src/hqai/math/rolling/__pycache__/mean.cpython-312.pyc
-src/hqai/math/rolling/__pycache__/std.cpython-312.pyc
-src/hqai/math/rolling/__pycache__/sum.cpython-312.pyc
-src/hqai/math/rolling/mean.py
-src/hqai/math/rolling/std.py
-src/hqai/math/rolling/sum.py
-src/hqai/math/smoothing/__init__.py
-src/hqai/math/smoothing/__pycache__/__init__.cpython-312.pyc
-src/hqai/math/smoothing/__pycache__/ema.cpython-312.pyc
-src/hqai/math/smoothing/__pycache__/wilder.cpython-312.pyc
-src/hqai/math/smoothing/ema.py
-src/hqai/math/smoothing/wilder.py
-src/hqai/math/statistics/__init__.py
-src/hqai/math/statistics/__pycache__/__init__.cpython-312.pyc
-src/hqai/math/statistics/__pycache__/correlation.cpython-312.pyc
-src/hqai/math/statistics/__pycache__/covariance.cpython-312.pyc
-src/hqai/math/statistics/__pycache__/zscore.cpython-312.pyc
-src/hqai/math/statistics/correlation.py
-src/hqai/math/statistics/covariance.py
-src/hqai/math/statistics/zscore.py
-src/hqai/ml/__init__.py
-src/hqai/ml/__pycache__/__init__.cpython-312.pyc
-src/hqai/portfolio/__init__.py
-src/hqai/portfolio/__pycache__/__init__.cpython-312.pyc
-src/hqai/reports/__init__.py
-src/hqai/reports/__pycache__/__init__.cpython-312.pyc
-src/hqai/scheduler/__init__.py
-src/hqai/scheduler/daily.py
-src/hqai/scheduler/jobs.py
-src/hqai/universe/__init__.py
-src/hqai/universe/__pycache__/__init__.cpython-312.pyc
-src/hqai/universe/__pycache__/agent.cpython-312.pyc
-src/hqai/universe/__pycache__/downloader.cpython-312.pyc
-src/hqai/universe/__pycache__/metadata.cpython-312.pyc
-src/hqai/universe/__pycache__/storage.cpython-312.pyc
-src/hqai/universe/__pycache__/validator.cpython-312.pyc
-src/hqai/universe/agent.py
-src/hqai/universe/agent.pyy
-src/hqai/universe/downloader.py
-src/hqai/universe/metadata.py
-src/hqai/universe/storage.py
-src/hqai/universe/validator.py
-src/hqai/utils/__init__.py
-src/hqai/utils/__pycache__/__init__.cpython-312.pyc
+src/hqai
+├── __init__.py
+├── __pycache__
+│   └── __init__.cpython-312.pyc
+├── alpha
+├── backtest
+├── cli
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── history.py
+│   ├── main.py
+│   ├── universe.py
+│   └── update.py
+├── config
+├── core
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── base_agent.py
+│   ├── config.py
+│   ├── constants.py
+│   ├── database.py
+│   ├── database.py.save
+│   ├── exceptions.py
+│   ├── filesystem.py
+│   ├── logger.py
+│   └── progress.py
+├── dashboard
+│   ├── __init__.py
+│   └── __pycache__
+├── data
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── downloader.py
+│   ├── metadata.py
+│   ├── storage.py
+│   ├── universe.py
+│   └── validator.py
+├── database
+│   ├── __init__.py
+│   ├── __pycache__
+│   └── history_repository.py
+├── features
+│   ├── __init__.py
+│   └── __pycache__
+├── history
+│   ├── __pycache__
+│   ├── agent.py
+│   ├── downloader_v2.py
+│   ├── downloader.py
+│   ├── index.py
+│   ├── indexer.py
+│   ├── models.py
+│   ├── stats.py
+│   ├── storage.py
+│   ├── updater.py
+│   └── verify.py
+├── indicators
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── agent.py
+│   ├── base.py
+│   ├── config.py
+│   ├── exceptions.py
+│   ├── index.py
+│   ├── metadata.py
+│   ├── momentum
+│   ├── registry.py
+│   ├── schemas.py
+│   ├── storage.py
+│   ├── support
+│   ├── trend
+│   ├── validator.py
+│   ├── volatility
+│   └── volume
+├── marketdata
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── agent.py
+│   ├── base.py
+│   ├── metadata.py
+│   ├── providers
+│   ├── registry.py
+│   ├── storage.py
+│   └── validator.py
+├── math
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── finance
+│   ├── rolling
+│   ├── smoothing
+│   └── statistics
+├── ml
+│   ├── __init__.py
+│   └── __pycache__
+├── portfolio
+│   ├── __init__.py
+│   └── __pycache__
+├── reports
+│   ├── __init__.py
+│   └── __pycache__
+├── scheduler
+│   ├── __init__.py
+│   ├── daily.py
+│   └── jobs.py
+├── services
+├── universe
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── agent.py
+│   ├── agent.pyy
+│   ├── downloader.py
+│   ├── metadata.py
+│   ├── storage.py
+│   └── validator.py
+└── utils
+    ├── __init__.py
+    └── __pycache__
+
+47 directories, 70 files

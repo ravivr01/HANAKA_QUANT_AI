@@ -6,69 +6,63 @@ HQAI History CLI
 History Management Commands
 
 Author  : Ravi Varma
-Version : 0.7.1
+Version : 0.7.4
 """
 
 import typer
 
 from hqai.history.downloader import HistoryDownloader
+from hqai.history.updater import HistoryUpdater
+from hqai.history.verify import HistoryVerify
 from hqai.history.stats import HistoryStats
 
 app = typer.Typer(
     help="History Management Commands"
 )
 
-
-# ---------------------------------------------------------
-# Download
-# ---------------------------------------------------------
+# ==========================================================
+# DOWNLOAD
+# ==========================================================
 
 @app.command("download")
 def download():
     """
-    Download complete history.
+    Download complete historical data.
     """
 
     HistoryDownloader().download_all()
 
 
-# ---------------------------------------------------------
-# Update
-# ---------------------------------------------------------
+# ==========================================================
+# UPDATE
+# ==========================================================
 
 @app.command("update")
 def update():
     """
-    Update existing history.
+    Update historical data by downloading only
+    missing daily candles.
     """
 
-    typer.echo("=" * 60)
-    typer.echo("HQAI HISTORY UPDATE")
-    typer.echo("=" * 60)
-    typer.echo()
-    typer.echo("History Update - Coming Soon")
+    HistoryUpdater().run()
 
 
-# ---------------------------------------------------------
-# Verify
-# ---------------------------------------------------------
+# ==========================================================
+# VERIFY
+# ==========================================================
 
 @app.command("verify")
 def verify():
     """
-    Verify downloaded history.
+    Verify downloaded history repository.
     """
 
-    typer.echo("=" * 60)
-    typer.echo("HQAI HISTORY VERIFY")
-    typer.echo("=" * 60)
-    typer.echo()
-    typer.echo("History Verification - Coming Soon")
+    HistoryVerify().verify()
 
 
-# ---------------------------------------------------------
-# Statistics
-# ---------------------------------------------------------
+# ==========================================================
+# STATISTICS
+# ==========================================================
 
 @app.command("stats")
 def stats():

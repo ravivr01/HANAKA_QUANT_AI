@@ -3,88 +3,146 @@
 HQAI History Updater
 ==========================================================
 
-Incrementally updates historical market data.
+Updates existing history by downloading only missing data.
 
 Author  : Ravi Varma
-Version : 1.0
+Version : 0.7.4
 """
 
 from __future__ import annotations
 
-from datetime import timedelta
+from pathlib import Path
 
 import pandas as pd
+import yfinance as yf
+from loguru import logger
 
-from hqai.core.database import db
-from hqai.core.logger import log
-from hqai.history.downloader import HistoryDownloader
+from hqai.core.config import config
 
 
 class HistoryUpdater:
 
     def __init__(self):
 
-        self.downloader = HistoryDownloader()
+        self.history_dir = config.data_dir / "bronze" / "history"
 
-    ########################################################
+    # -----------------------------------------------------
 
-    def last_date(
-        self,
-        symbol: str,
-    ):
+    def history_files(self):
 
-        sql = f"""
-        SELECT last_date
-        FROM history_index
-        WHERE symbol='{symbol}'
-        """
+        return sorted(self.history_dir.rglob("*.parquet"))
 
-        df = db.query(sql)
+    # -----------------------------------------------------
 
-        if len(df) == 0:
+    def symbol_from_file(self, file: Path):
 
-            return None
+        if file.name == "history.parquet":
+            return file.parent.name
 
-        return df["last_date"][0]
+        return file.stem
 
-    ########################################################
+    # -----------------------------------------------------
 
-    def update_symbol(
-        self,
-        symbol: str,
-    ):
+    def latest_date(self, df):
 
-        last = self.last_date(symbol)
+        return pd.to_datetime(df["Date"]).max()
 
-        if last is None:
+    # -----------------------------------------------------
 
-            log.warning(f"{symbol} has no history.")
+    def update_symbol(self, file: Path):
 
-            return
+        symbol = self.symbol_from_file(file)
 
-        start = pd.Timestamp(last) + timedelta(days=1)
+        logger.info(f"Updating {symbol}")
 
-        log.info(f"{symbol} update from {start.date()}")
+        try:
 
-        # Download full history for now.
-        # Next release will support incremental download.
-        df = self.downloader.download_symbol(symbol)
+            df_old = pd.read_parquet(file)
 
-        self.downloader.storage.save(
-            df,
-            symbol,
-        )
+            last_date = self.latest_date(df_old)
 
-        log.success(f"{symbol} updated.")
+            df_new = yf.download(
+                f"{symbol}.NS",
+                start=last_date.strftime("%Y-%m-%d"),
+                interval="1d",
+                progress=False,
+                auto_adjust=False,
+                threads=False,
+            )
 
-    ########################################################
+            if df_new.empty:
 
-    def update_all(self):
+                logger.info(f"{symbol} already up-to-date")
 
-        universe = self.downloader.load_universe()
+                return "SKIPPED"
 
-        symbols = universe["SYMBOL"].to_list()
+            df_new.reset_index(inplace=True)
 
-        for symbol in symbols:
+            if isinstance(df_new.columns, pd.MultiIndex):
+                df_new.columns = [c[0] for c in df_new.columns]
 
-            self.update_symbol(symbol)
+            df_all = pd.concat(
+                [df_old, df_new],
+                ignore_index=True,
+            )
+
+            df_all.drop_duplicates(
+                subset=["Date"],
+                inplace=True,
+            )
+
+            df_all.to_parquet(
+                file,
+                index=False,
+            )
+
+            logger.success(f"{symbol} updated")
+
+            return "UPDATED"
+
+        except Exception as ex:
+
+            logger.error(f"{symbol} -> {ex}")
+
+            return "FAILED"
+
+    # -----------------------------------------------------
+
+    def run(self):
+
+        files = self.history_files()
+
+        updated = 0
+        skipped = 0
+        failed = 0
+
+        print()
+        print("=" * 70)
+        print("HQAI HISTORY UPDATE")
+        print("=" * 70)
+        print()
+
+        print(f"Symbols : {len(files)}")
+        print()
+
+        for file in files:
+
+            status = self.update_symbol(file)
+
+            if status == "UPDATED":
+                updated += 1
+
+            elif status == "SKIPPED":
+                skipped += 1
+
+            else:
+                failed += 1
+
+        print()
+        print("=" * 70)
+        print("SUMMARY")
+        print("=" * 70)
+        print(f"Updated : {updated}")
+        print(f"Skipped : {skipped}")
+        print(f"Failed  : {failed}")
+        print("=" * 70)

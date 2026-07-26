@@ -41,6 +41,7 @@ src/hqai/history/models.py
 src/hqai/history/stats.py
 src/hqai/history/storage.py
 src/hqai/history/updater.py
+src/hqai/history/verify.py
 src/hqai/indicators/__init__.py
 src/hqai/indicators/agent.py
 src/hqai/indicators/base.py
