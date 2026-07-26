@@ -11,6 +11,7 @@ src/hqai.egg-info/top_level.txt
 src/hqai/cli/__init__.py
 src/hqai/cli/features.py
 src/hqai/cli/history.py
+src/hqai/cli/indicators.py
 src/hqai/cli/main.py
 src/hqai/cli/universe.py
 src/hqai/cli/update.py
@@ -55,6 +56,7 @@ src/hqai/history/verify.py
 src/hqai/indicators/__init__.py
 src/hqai/indicators/agent.py
 src/hqai/indicators/base.py
+src/hqai/indicators/builder.py
 src/hqai/indicators/config.py
 src/hqai/indicators/exceptions.py
 src/hqai/indicators/index.py
