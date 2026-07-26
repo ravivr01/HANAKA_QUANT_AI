@@ -9,6 +9,7 @@ src/hqai.egg-info/entry_points.txt
 src/hqai.egg-info/requires.txt
 src/hqai.egg-info/top_level.txt
 src/hqai/cli/__init__.py
+src/hqai/cli/features.py
 src/hqai/cli/history.py
 src/hqai/cli/main.py
 src/hqai/cli/universe.py
@@ -32,6 +33,15 @@ src/hqai/data/validator.py
 src/hqai/database/__init__.py
 src/hqai/database/history_repository.py
 src/hqai/features/__init__.py
+src/hqai/features/agent.py
+src/hqai/features/builder.py
+src/hqai/features/config.py
+src/hqai/features/exceptions.py
+src/hqai/features/index.py
+src/hqai/features/metadata.py
+src/hqai/features/registry.py
+src/hqai/features/storage.py
+src/hqai/features/validator.py
 src/hqai/history/agent.py
 src/hqai/history/downloader.py
 src/hqai/history/downloader_v2.py
